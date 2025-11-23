@@ -1,0 +1,410 @@
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
+import { TrendingDown, Download, Info, AlertTriangle } from "lucide-react";
+import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { toast } from "sonner";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import * as XLSX from "xlsx";
+
+const formatINR = (amount) => {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
+
+const COLORS = {
+  withdrawals: '#f59e0b',
+  returns: '#10b981',
+  remaining: '#3b82f6'
+};
+
+const RISK_PROFILES = {
+  conservative: { label: 'Conservative', returnAdjustment: -1 },
+  moderate: { label: 'Moderate', returnAdjustment: 0 },
+  aggressive: { label: 'Aggressive', returnAdjustment: 1 }
+};
+
+export default function SWPCalculator({ onCalculate }) {
+  const [lumpsumInvestment, setLumpsumInvestment] = useState(1000000);
+  const [monthlyWithdrawal, setMonthlyWithdrawal] = useState(10000);
+  const [expectedReturn, setExpectedReturn] = useState(10);
+  const [duration, setDuration] = useState(15);
+  const [inflation, setInflation] = useState(6);
+  const [riskProfile, setRiskProfile] = useState('moderate');
+  const [results, setResults] = useState(null);
+
+  const calculateSWP = () => {
+    const adjustedReturn = expectedReturn + RISK_PROFILES[riskProfile].returnAdjustment;
+    const monthlyRate = adjustedReturn / 100 / 12;
+    const months = duration * 12;
+    
+    let balance = lumpsumInvestment;
+    let totalWithdrawals = 0;
+    let totalReturns = 0;
+    let exhausted = false;
+    let exhaustionMonth = 0;
+    
+    for (let month = 1; month <= months; month++) {
+      const monthlyReturn = balance * monthlyRate;
+      totalReturns += monthlyReturn;
+      balance = balance + monthlyReturn - monthlyWithdrawal;
+      totalWithdrawals += monthlyWithdrawal;
+      
+      if (balance <= 0 && !exhausted) {
+        exhausted = true;
+        exhaustionMonth = month;
+        balance = 0;
+        break;
+      }
+    }
+    
+    const exhaustionProbability = exhausted ? 100 : (monthlyWithdrawal * 12 / (lumpsumInvestment * (adjustedReturn / 100))) > 0.8 ? 60 : 20;
+    
+    const calculatedResults = {
+      totalWithdrawals: Math.round(totalWithdrawals),
+      returnsEarned: Math.round(totalReturns),
+      remainingValue: Math.round(balance),
+      exhausted,
+      exhaustionMonth,
+      exhaustionProbability
+    };
+    
+    setResults(calculatedResults);
+    onCalculate && onCalculate({
+      type: 'swp',
+      inputs: { lumpsumInvestment, monthlyWithdrawal, expectedReturn: adjustedReturn, duration, inflation, riskProfile },
+      outputs: calculatedResults
+    });
+  };
+
+  const exportToPDF = () => {
+    if (!results) return;
+    
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.text('SWP Return Calculator Report', 20, 20);
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 20, 30);
+    
+    doc.autoTable({
+      startY: 40,
+      head: [['Input Parameter', 'Value']],
+      body: [
+        ['Lumpsum Investment', formatINR(lumpsumInvestment)],
+        ['Monthly Withdrawal', formatINR(monthlyWithdrawal)],
+        ['Expected Return', `${expectedReturn}%`],
+        ['Duration', `${duration} years`],
+        ['Inflation', `${inflation}%`],
+        ['Risk Profile', RISK_PROFILES[riskProfile].label]
+      ]
+    });
+    
+    doc.autoTable({
+      startY: doc.lastAutoTable.finalY + 10,
+      head: [['Output', 'Value']],
+      body: [
+        ['Total Withdrawals', formatINR(results.totalWithdrawals)],
+        ['Returns Earned', formatINR(results.returnsEarned)],
+        ['Remaining Portfolio Value', formatINR(results.remainingValue)],
+        ['Exhaustion Status', results.exhausted ? `Exhausted in ${Math.floor(results.exhaustionMonth / 12)} years ${results.exhaustionMonth % 12} months` : 'Not Exhausted'],
+        ['Exhaustion Probability', `${results.exhaustionProbability}%`]
+      ]
+    });
+    
+    doc.save('swp-calculator-report.pdf');
+    toast.success('PDF exported successfully');
+  };
+
+  const exportToExcel = () => {
+    if (!results) return;
+    
+    const data = [
+      ['SWP Return Calculator Report'],
+      ['Generated on:', new Date().toLocaleString()],
+      [],
+      ['Input Parameter', 'Value'],
+      ['Lumpsum Investment', lumpsumInvestment],
+      ['Monthly Withdrawal', monthlyWithdrawal],
+      ['Expected Return', `${expectedReturn}%`],
+      ['Duration', `${duration} years`],
+      ['Inflation', `${inflation}%`],
+      ['Risk Profile', RISK_PROFILES[riskProfile].label],
+      [],
+      ['Output', 'Value'],
+      ['Total Withdrawals', results.totalWithdrawals],
+      ['Returns Earned', results.returnsEarned],
+      ['Remaining Portfolio Value', results.remainingValue],
+      ['Exhaustion Status', results.exhausted ? `Exhausted in ${Math.floor(results.exhaustionMonth / 12)} years ${results.exhaustionMonth % 12} months` : 'Not Exhausted'],
+      ['Exhaustion Probability', `${results.exhaustionProbability}%`]
+    ];
+    
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'SWP Report');
+    XLSX.writeFile(wb, 'swp-calculator-report.xlsx');
+    toast.success('Excel exported successfully');
+  };
+
+  const chartData = results ? [
+    { name: 'Total Withdrawals', value: results.totalWithdrawals, color: COLORS.withdrawals },
+    { name: 'Returns Earned', value: results.returnsEarned, color: COLORS.returns },
+    { name: 'Remaining Value', value: results.remainingValue, color: COLORS.remaining }
+  ] : [];
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+      {/* Input Section */}
+      <Card className="p-6 md:p-8 bg-white/70 dark:bg-slate-800/70 backdrop-blur-md border-slate-200 dark:border-slate-700 shadow-xl" data-testid="swp-input-card">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100" style={{fontFamily: 'Manrope, sans-serif'}}>
+            SWP Calculator
+          </h2>
+          <TrendingDown className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+        </div>
+
+        <div className="space-y-6">
+          {/* Lumpsum Investment */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Lumpsum Investment (₹)</Label>
+              <TooltipProvider>
+                <UITooltip>
+                  <TooltipTrigger>
+                    <Info className="w-4 h-4 text-slate-400" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Total amount you want to invest initially</p>
+                  </TooltipContent>
+                </UITooltip>
+              </TooltipProvider>
+            </div>
+            <Input
+              type="number"
+              value={lumpsumInvestment}
+              onChange={(e) => setLumpsumInvestment(Number(e.target.value))}
+              className="text-lg font-semibold h-12 bg-white dark:bg-slate-900"
+              data-testid="swp-lumpsum-investment-input"
+            />
+            <Slider
+              value={[lumpsumInvestment]}
+              onValueChange={([value]) => setLumpsumInvestment(value)}
+              min={100000}
+              max={10000000}
+              step={50000}
+              className="mt-2"
+              data-testid="swp-lumpsum-investment-slider"
+            />
+          </div>
+
+          {/* Monthly Withdrawal */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Monthly Withdrawal (₹)</Label>
+              <TooltipProvider>
+                <UITooltip>
+                  <TooltipTrigger>
+                    <Info className="w-4 h-4 text-slate-400" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Amount you want to withdraw every month</p>
+                  </TooltipContent>
+                </UITooltip>
+              </TooltipProvider>
+            </div>
+            <Input
+              type="number"
+              value={monthlyWithdrawal}
+              onChange={(e) => setMonthlyWithdrawal(Number(e.target.value))}
+              className="text-lg font-semibold h-12 bg-white dark:bg-slate-900"
+              data-testid="swp-monthly-withdrawal-input"
+            />
+            <Slider
+              value={[monthlyWithdrawal]}
+              onValueChange={([value]) => setMonthlyWithdrawal(value)}
+              min={5000}
+              max={200000}
+              step={1000}
+              className="mt-2"
+              data-testid="swp-monthly-withdrawal-slider"
+            />
+          </div>
+
+          {/* Expected Return */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Expected Return (%)</Label>
+              <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">{expectedReturn}%</span>
+            </div>
+            <Slider
+              value={[expectedReturn]}
+              onValueChange={([value]) => setExpectedReturn(value)}
+              min={1}
+              max={25}
+              step={0.5}
+              data-testid="swp-expected-return-slider"
+            />
+          </div>
+
+          {/* Duration */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Duration (Years)</Label>
+              <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">{duration} years</span>
+            </div>
+            <Slider
+              value={[duration]}
+              onValueChange={([value]) => setDuration(value)}
+              min={1}
+              max={40}
+              step={1}
+              data-testid="swp-duration-slider"
+            />
+          </div>
+
+          {/* Inflation */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Inflation (%)</Label>
+              <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">{inflation}%</span>
+            </div>
+            <Slider
+              value={[inflation]}
+              onValueChange={([value]) => setInflation(value)}
+              min={0}
+              max={15}
+              step={0.5}
+              data-testid="swp-inflation-slider"
+            />
+          </div>
+
+          {/* Risk Profile */}
+          <div className="space-y-3">
+            <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Risk Profile</Label>
+            <Select value={riskProfile} onValueChange={setRiskProfile}>
+              <SelectTrigger className="h-12 bg-white dark:bg-slate-900" data-testid="swp-risk-profile-select">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="conservative">Conservative</SelectItem>
+                <SelectItem value="moderate">Moderate</SelectItem>
+                <SelectItem value="aggressive">Aggressive</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <Button
+            onClick={calculateSWP}
+            className="w-full h-12 text-base font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl"
+            data-testid="swp-calculate-btn"
+          >
+            Calculate Withdrawals
+          </Button>
+        </div>
+      </Card>
+
+      {/* Results Section */}
+      <div className="space-y-6">
+        <Card className="p-6 md:p-8 bg-white/70 dark:bg-slate-800/70 backdrop-blur-md border-slate-200 dark:border-slate-700 shadow-xl" data-testid="swp-results-card">
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6" style={{fontFamily: 'Manrope, sans-serif'}}>
+            Results
+          </h2>
+
+          {results ? (
+            <div className="space-y-6">
+              {/* Warning if exhausted */}
+              {results.exhausted && (
+                <Alert className="bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800" data-testid="swp-exhaustion-alert">
+                  <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400" />
+                  <AlertDescription className="text-red-800 dark:text-red-300">
+                    Portfolio will be exhausted in {Math.floor(results.exhaustionMonth / 12)} years {results.exhaustionMonth % 12} months
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* Output Values */}
+              <div className="grid grid-cols-1 gap-4">
+                <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Total Withdrawals</p>
+                  <p className="text-2xl font-bold text-amber-600 dark:text-amber-400" data-testid="swp-total-withdrawals">
+                    {formatINR(results.totalWithdrawals)}
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800">
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Returns Earned</p>
+                  <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="swp-returns-earned">
+                    {formatINR(results.returnsEarned)}
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800">
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Remaining Portfolio Value</p>
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400" data-testid="swp-remaining-value">
+                    {formatINR(results.remainingValue)}
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800">
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Exhaustion Probability</p>
+                  <p className="text-2xl font-bold text-red-600 dark:text-red-400" data-testid="swp-exhaustion-probability">
+                    {results.exhaustionProbability}%
+                  </p>
+                </div>
+              </div>
+
+              {/* Chart */}
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={chartData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {chartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value) => formatINR(value)} />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap gap-3">
+                <Button variant="outline" onClick={exportToPDF} className="flex-1" data-testid="swp-export-pdf-btn">
+                  <Download className="w-4 h-4 mr-2" />
+                  Export PDF
+                </Button>
+                <Button variant="outline" onClick={exportToExcel} className="flex-1" data-testid="swp-export-excel-btn">
+                  <Download className="w-4 h-4 mr-2" />
+                  Export Excel
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-12 text-slate-500 dark:text-slate-400">
+              <TrendingDown className="w-16 h-16 mx-auto mb-4 opacity-30" />
+              <p>Enter your withdrawal details and click Calculate Withdrawals</p>
+            </div>
+          )}
+        </Card>
+      </div>
+    </div>
+  );
+}
