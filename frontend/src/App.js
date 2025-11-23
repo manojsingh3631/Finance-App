@@ -92,7 +92,7 @@ function AppContent() {
           </TabsContent>
 
           <TabsContent value="swp" className="mt-0">
-            <SWPCalculator onCalculate={setSwpData} />
+            <SWPCalculator onCalculate={setSwpData} sipData={sipData} />
           </TabsContent>
 
           <TabsContent value="compare" className="mt-0">
