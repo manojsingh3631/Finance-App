@@ -46,10 +46,28 @@ export default function SWPCalculator({ onCalculate, sipData }) {
   const [yearlyWithdrawalPercent, setYearlyWithdrawalPercent] = useState(6);
   const [sipImported, setSipImported] = useState(false);
 
+  const importFromSIP = () => {
+    if (sipData && sipData.outputs) {
+      setLumpsumInvestment(sipData.outputs.totalValue);
+      setSipImported(true);
+      toast.success('SIP portfolio value imported successfully');
+    } else {
+      toast.error('Please calculate SIP first');
+    }
+  };
+
+  const getActualMonthlyWithdrawal = () => {
+    if (withdrawalMode === 'percentage') {
+      return Math.round((lumpsumInvestment * yearlyWithdrawalPercent) / 100 / 12);
+    }
+    return monthlyWithdrawal;
+  };
+
   const calculateSWP = () => {
     const adjustedReturn = expectedReturn + RISK_PROFILES[riskProfile].returnAdjustment;
     const monthlyRate = adjustedReturn / 100 / 12;
     const months = duration * 12;
+    const actualMonthlyWithdrawal = getActualMonthlyWithdrawal();
     
     let balance = lumpsumInvestment;
     let totalWithdrawals = 0;
@@ -60,8 +78,8 @@ export default function SWPCalculator({ onCalculate, sipData }) {
     for (let month = 1; month <= months; month++) {
       const monthlyReturn = balance * monthlyRate;
       totalReturns += monthlyReturn;
-      balance = balance + monthlyReturn - monthlyWithdrawal;
-      totalWithdrawals += monthlyWithdrawal;
+      balance = balance + monthlyReturn - actualMonthlyWithdrawal;
+      totalWithdrawals += actualMonthlyWithdrawal;
       
       if (balance <= 0 && !exhausted) {
         exhausted = true;
@@ -71,7 +89,7 @@ export default function SWPCalculator({ onCalculate, sipData }) {
       }
     }
     
-    const exhaustionProbability = exhausted ? 100 : (monthlyWithdrawal * 12 / (lumpsumInvestment * (adjustedReturn / 100))) > 0.8 ? 60 : 20;
+    const exhaustionProbability = exhausted ? 100 : (actualMonthlyWithdrawal * 12 / (lumpsumInvestment * (adjustedReturn / 100))) > 0.8 ? 60 : 20;
     
     const calculatedResults = {
       totalWithdrawals: Math.round(totalWithdrawals),
@@ -79,13 +97,24 @@ export default function SWPCalculator({ onCalculate, sipData }) {
       remainingValue: Math.round(balance),
       exhausted,
       exhaustionMonth,
-      exhaustionProbability
+      exhaustionProbability,
+      monthlyWithdrawal: actualMonthlyWithdrawal
     };
     
     setResults(calculatedResults);
     onCalculate && onCalculate({
       type: 'swp',
-      inputs: { lumpsumInvestment, monthlyWithdrawal, expectedReturn: adjustedReturn, duration, inflation, riskProfile },
+      inputs: { 
+        lumpsumInvestment, 
+        monthlyWithdrawal: actualMonthlyWithdrawal, 
+        expectedReturn: adjustedReturn, 
+        duration, 
+        inflation, 
+        riskProfile,
+        withdrawalMode,
+        yearlyWithdrawalPercent: withdrawalMode === 'percentage' ? yearlyWithdrawalPercent : null,
+        sipImported
+      },
       outputs: calculatedResults
     });
   };
