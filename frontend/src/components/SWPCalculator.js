@@ -34,7 +34,7 @@ const RISK_PROFILES = {
   aggressive: { label: 'Aggressive', returnAdjustment: 1 }
 };
 
-export default function SWPCalculator({ onCalculate }) {
+export default function SWPCalculator({ onCalculate, sipData }) {
   const [lumpsumInvestment, setLumpsumInvestment] = useState(1000000);
   const [monthlyWithdrawal, setMonthlyWithdrawal] = useState(10000);
   const [expectedReturn, setExpectedReturn] = useState(10);
@@ -42,6 +42,9 @@ export default function SWPCalculator({ onCalculate }) {
   const [inflation, setInflation] = useState(6);
   const [riskProfile, setRiskProfile] = useState('moderate');
   const [results, setResults] = useState(null);
+  const [withdrawalMode, setWithdrawalMode] = useState('fixed'); // 'fixed' or 'percentage'
+  const [yearlyWithdrawalPercent, setYearlyWithdrawalPercent] = useState(6);
+  const [sipImported, setSipImported] = useState(false);
 
   const calculateSWP = () => {
     const adjustedReturn = expectedReturn + RISK_PROFILES[riskProfile].returnAdjustment;
