@@ -205,6 +205,35 @@ export default function SWPCalculator({ onCalculate, sipData }) {
         </div>
 
         <div className="space-y-6">
+          {/* Import from SIP */}
+          {sipData && sipData.outputs && !sipImported && (
+            <Alert className="bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800" data-testid="swp-sip-import-alert">
+              <Info className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <AlertDescription className="text-blue-800 dark:text-blue-300">
+                <div className="flex items-center justify-between">
+                  <span>SIP Portfolio Available: {formatINR(sipData.outputs.totalValue)}</span>
+                  <Button 
+                    size="sm" 
+                    onClick={importFromSIP}
+                    className="ml-4 bg-blue-600 hover:bg-blue-700"
+                    data-testid="swp-import-from-sip-btn"
+                  >
+                    Import from SIP
+                  </Button>
+                </div>
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {sipImported && (
+            <Alert className="bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800" data-testid="swp-imported-alert">
+              <Info className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <AlertDescription className="text-emerald-800 dark:text-emerald-300">
+                SIP portfolio imported successfully
+              </AlertDescription>
+            </Alert>
+          )}
+
           {/* Lumpsum Investment */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
@@ -223,13 +252,19 @@ export default function SWPCalculator({ onCalculate, sipData }) {
             <Input
               type="number"
               value={lumpsumInvestment}
-              onChange={(e) => setLumpsumInvestment(Number(e.target.value))}
+              onChange={(e) => {
+                setLumpsumInvestment(Number(e.target.value));
+                setSipImported(false);
+              }}
               className="text-lg font-semibold h-12 bg-white dark:bg-slate-900"
               data-testid="swp-lumpsum-investment-input"
             />
             <Slider
               value={[lumpsumInvestment]}
-              onValueChange={([value]) => setLumpsumInvestment(value)}
+              onValueChange={([value]) => {
+                setLumpsumInvestment(value);
+                setSipImported(false);
+              }}
               min={100000}
               max={10000000}
               step={50000}
@@ -238,38 +273,75 @@ export default function SWPCalculator({ onCalculate, sipData }) {
             />
           </div>
 
-          {/* Monthly Withdrawal */}
+          {/* Withdrawal Mode */}
           <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Monthly Withdrawal (₹)</Label>
-              <TooltipProvider>
-                <UITooltip>
-                  <TooltipTrigger>
-                    <Info className="w-4 h-4 text-slate-400" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Amount you want to withdraw every month</p>
-                  </TooltipContent>
-                </UITooltip>
-              </TooltipProvider>
-            </div>
-            <Input
-              type="number"
-              value={monthlyWithdrawal}
-              onChange={(e) => setMonthlyWithdrawal(Number(e.target.value))}
-              className="text-lg font-semibold h-12 bg-white dark:bg-slate-900"
-              data-testid="swp-monthly-withdrawal-input"
-            />
-            <Slider
-              value={[monthlyWithdrawal]}
-              onValueChange={([value]) => setMonthlyWithdrawal(value)}
-              min={5000}
-              max={200000}
-              step={1000}
-              className="mt-2"
-              data-testid="swp-monthly-withdrawal-slider"
-            />
+            <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Withdrawal Mode</Label>
+            <Select value={withdrawalMode} onValueChange={setWithdrawalMode}>
+              <SelectTrigger className="h-12 bg-white dark:bg-slate-900" data-testid="swp-withdrawal-mode-select">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="fixed">Fixed Monthly Amount</SelectItem>
+                <SelectItem value="percentage">Yearly % of Total</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
+
+          {/* Conditional: Fixed Monthly Withdrawal OR Yearly % */}
+          {withdrawalMode === 'fixed' ? (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Monthly Withdrawal (₹)</Label>
+                <TooltipProvider>
+                  <UITooltip>
+                    <TooltipTrigger>
+                      <Info className="w-4 h-4 text-slate-400" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Fixed amount you want to withdraw every month</p>
+                    </TooltipContent>
+                  </UITooltip>
+                </TooltipProvider>
+              </div>
+              <Input
+                type="number"
+                value={monthlyWithdrawal}
+                onChange={(e) => setMonthlyWithdrawal(Number(e.target.value))}
+                className="text-lg font-semibold h-12 bg-white dark:bg-slate-900"
+                data-testid="swp-monthly-withdrawal-input"
+              />
+              <Slider
+                value={[monthlyWithdrawal]}
+                onValueChange={([value]) => setMonthlyWithdrawal(value)}
+                min={5000}
+                max={200000}
+                step={1000}
+                className="mt-2"
+                data-testid="swp-monthly-withdrawal-slider"
+              />
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Yearly Withdrawal (%)</Label>
+                <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">{yearlyWithdrawalPercent}%</span>
+              </div>
+              <Slider
+                value={[yearlyWithdrawalPercent]}
+                onValueChange={([value]) => setYearlyWithdrawalPercent(value)}
+                min={1}
+                max={20}
+                step={0.5}
+                data-testid="swp-yearly-withdrawal-slider"
+              />
+              <div className="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800">
+                <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Calculated Monthly Withdrawal</p>
+                <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400" data-testid="swp-calculated-monthly">
+                  {formatINR(getActualMonthlyWithdrawal())}
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Expected Return */}
           <div className="space-y-3">
