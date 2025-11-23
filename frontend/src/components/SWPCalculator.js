@@ -438,6 +438,13 @@ export default function SWPCalculator({ onCalculate, sipData }) {
 
               {/* Output Values */}
               <div className="grid grid-cols-1 gap-4">
+                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Monthly Withdrawal</p>
+                  <p className="text-2xl font-bold text-slate-800 dark:text-slate-100" data-testid="swp-monthly-withdrawal-result">
+                    {formatINR(results.monthlyWithdrawal)}
+                  </p>
+                </div>
+
                 <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Total Withdrawals</p>
                   <p className="text-2xl font-bold text-amber-600 dark:text-amber-400" data-testid="swp-total-withdrawals">
