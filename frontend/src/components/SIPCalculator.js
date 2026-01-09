@@ -58,37 +58,63 @@ export default function SIPCalculator({ onCalculate }) {
     const months = duration * 12;
     const stepUpRate = stepUp / 100;
     
-    let totalInvested = 0;
-    let futureValue = 0;
+    // Calculate lump sum growth if included
+    let lumpsumFutureValue = 0;
+    if (includeLumpsum && lumpsumAmount > 0) {
+      lumpsumFutureValue = lumpsumAmount * Math.pow(1 + adjustedReturn / 100, duration);
+    }
+    
+    // Calculate SIP future value
+    let totalSIPInvested = 0;
+    let sipFutureValue = 0;
     let currentMonthlyInvestment = monthlyInvestment;
     
     for (let month = 1; month <= months; month++) {
-      totalInvested += currentMonthlyInvestment;
-      futureValue = (futureValue + currentMonthlyInvestment) * (1 + monthlyRate);
+      totalSIPInvested += currentMonthlyInvestment;
+      sipFutureValue = (sipFutureValue + currentMonthlyInvestment) * (1 + monthlyRate);
       
       if (month % 12 === 0) {
         currentMonthlyInvestment = currentMonthlyInvestment * (1 + stepUpRate);
       }
     }
     
-    const estimatedReturns = futureValue - totalInvested;
+    const sipReturns = sipFutureValue - totalSIPInvested;
+    const lumpsumReturns = lumpsumFutureValue - (includeLumpsum ? lumpsumAmount : 0);
+    const totalInvested = totalSIPInvested + (includeLumpsum ? lumpsumAmount : 0);
+    const totalFutureValue = sipFutureValue + lumpsumFutureValue;
+    const totalReturns = totalFutureValue - totalInvested;
+    
     const inflationRate = inflation / 100;
-    const inflationAdjustedValue = futureValue / Math.pow(1 + inflationRate, duration);
-    const inflationImpact = futureValue - inflationAdjustedValue;
+    const inflationAdjustedValue = totalFutureValue / Math.pow(1 + inflationRate, duration);
+    const inflationImpact = totalFutureValue - inflationAdjustedValue;
     
     const calculatedResults = {
+      // Lump sum specific
+      lumpsumInvested: includeLumpsum ? Math.round(lumpsumAmount) : 0,
+      lumpsumFutureValue: Math.round(lumpsumFutureValue),
+      lumpsumReturns: Math.round(lumpsumReturns),
+      
+      // SIP specific
+      sipInvested: Math.round(totalSIPInvested),
+      sipFutureValue: Math.round(sipFutureValue),
+      sipReturns: Math.round(sipReturns),
+      
+      // Combined totals
       totalInvested: Math.round(totalInvested),
-      estimatedReturns: Math.round(estimatedReturns),
-      totalValue: Math.round(futureValue),
+      estimatedReturns: Math.round(totalReturns),
+      totalValue: Math.round(totalFutureValue),
       inflationAdjustedValue: Math.round(inflationAdjustedValue),
       inflationImpact: Math.round(inflationImpact),
-      confidence: RISK_PROFILES[riskProfile].confidence
+      confidence: RISK_PROFILES[riskProfile].confidence,
+      
+      // Flags
+      includeLumpsum
     };
     
     setResults(calculatedResults);
     onCalculate && onCalculate({
       type: 'sip',
-      inputs: { monthlyInvestment, expectedReturn: adjustedReturn, duration, stepUp, inflation, riskProfile },
+      inputs: { monthlyInvestment, expectedReturn: adjustedReturn, duration, stepUp, inflation, riskProfile, includeLumpsum, lumpsumAmount: includeLumpsum ? lumpsumAmount : 0 },
       outputs: calculatedResults
     });
   };
