@@ -10,9 +10,31 @@ export function AuthProvider({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Check if user data was passed from AuthCallback
   useEffect(() => {
+    // Check if we just completed auth
+    const authJustCompleted = sessionStorage.getItem('auth_just_completed');
+    const storedUserData = sessionStorage.getItem('user_data');
+    
+    if (authJustCompleted === 'true' && storedUserData) {
+      try {
+        const userData = JSON.parse(storedUserData);
+        console.log('Loading user from session storage:', userData);
+        setUser(userData);
+        setIsAuthenticated(true);
+        setIsLoading(false);
+        
+        // Clear the flags
+        sessionStorage.removeItem('auth_just_completed');
+        sessionStorage.removeItem('user_data');
+        return;
+      } catch (e) {
+        console.error('Error parsing stored user data:', e);
+      }
+    }
+
+    // Check if user data was passed from AuthCallback via location state
     if (location.state?.user) {
+      console.log('Loading user from location state:', location.state.user);
       setUser(location.state.user);
       setIsAuthenticated(true);
       setIsLoading(false);
@@ -25,15 +47,18 @@ export function AuthProvider({ children }) {
 
   const checkAuth = async () => {
     try {
+      console.log('Checking auth with backend...');
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/me`, {
         credentials: 'include',
       });
 
       if (response.ok) {
         const userData = await response.json();
+        console.log('Auth check successful:', userData);
         setUser(userData);
         setIsAuthenticated(true);
       } else {
+        console.log('Auth check failed with status:', response.status);
         setIsAuthenticated(false);
         setUser(null);
       }
