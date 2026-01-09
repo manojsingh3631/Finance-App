@@ -17,11 +17,13 @@ export default function AuthCallback() {
       const sessionId = params.get('session_id');
 
       if (!sessionId) {
+        console.log('No session_id found, redirecting to login');
         navigate('/login');
         return;
       }
 
       try {
+        console.log('Processing session with sessionId:', sessionId);
         const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/session`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -31,9 +33,22 @@ export default function AuthCallback() {
 
         if (response.ok) {
           const userData = await response.json();
-          // Navigate to dashboard with user data
-          navigate('/dashboard', { state: { user: userData }, replace: true });
+          console.log('Session exchange successful, user:', userData);
+          
+          // Set flag to indicate successful login
+          sessionStorage.setItem('auth_just_completed', 'true');
+          sessionStorage.setItem('user_data', JSON.stringify(userData));
+          
+          // Small delay to ensure cookie is set
+          await new Promise(resolve => setTimeout(resolve, 100));
+          
+          // Navigate to dashboard - the auth context will pick up the session
+          navigate('/dashboard', { replace: true });
+          
+          // Force a reload to ensure clean state
+          window.location.reload();
         } else {
+          console.error('Session exchange failed with status:', response.status);
           navigate('/login');
         }
       } catch (error) {
@@ -46,10 +61,11 @@ export default function AuthCallback() {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen flex items-center justify-center bg-slate-950">
       <div className="text-center">
-        <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-purple-600" />
-        <p className="text-slate-600 dark:text-slate-400">Completing authentication...</p>
+        <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-indigo-500" />
+        <p className="text-slate-400">Completing authentication...</p>
+        <p className="text-slate-500 text-sm mt-2">Please wait...</p>
       </div>
     </div>
   );
