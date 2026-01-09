@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import SaveCalculationDialog from "@/components/SaveCalculationDialog";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
