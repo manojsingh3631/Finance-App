@@ -62,6 +62,18 @@ class CalculationCreate(BaseModel):
     outputs: dict
     name: Optional[str] = None
 
+class StatusCheck(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    status: str
+    message: str
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class StatusCheckCreate(BaseModel):
+    status: str
+    message: str
+
 
 # Auth Helper Functions
 async def get_session_token(request: Request) -> Optional[str]:
