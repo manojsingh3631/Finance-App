@@ -55,6 +55,7 @@ class CalculationSave(BaseModel):
     outputs: dict
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     name: Optional[str] = None
+    user_id: Optional[str] = None  # Associate with user
 
 class CalculationCreate(BaseModel):
     calculator_type: str
