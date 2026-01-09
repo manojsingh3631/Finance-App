@@ -50,7 +50,7 @@ class CalculationSave(BaseModel):
     model_config = ConfigDict(extra="ignore")
     
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    calculator_type: str  # "sip" or "swp"
+    calculator_type: str
     inputs: dict
     outputs: dict
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -67,13 +67,11 @@ class StatusCheck(BaseModel):
     model_config = ConfigDict(extra="ignore")
     
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    status: str
-    message: str
+    client_name: str
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class StatusCheckCreate(BaseModel):
-    status: str
-    message: str
+    client_name: str
 
 
 # Auth Helper Functions
