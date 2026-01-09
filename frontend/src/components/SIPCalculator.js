@@ -11,6 +11,7 @@ import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import SaveCalculationDialog from "@/components/SaveCalculationDialog";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
