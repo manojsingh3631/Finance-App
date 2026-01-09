@@ -636,14 +636,20 @@ export default function SWPCalculator({ onCalculate, sipData }) {
               )}
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap gap-3">
-                <Button variant="outline" onClick={exportToPDF} className="flex-1" data-testid="swp-export-pdf-btn">
+              <div className="grid grid-cols-3 gap-3">
+                <SaveCalculationDialog
+                  calculationType="swp"
+                  inputs={{ lumpsumInvestment, monthlyWithdrawal: getActualMonthlyWithdrawal(), expectedReturn, duration, inflation, riskProfile, withdrawalMode, inflationAdjustedWithdrawal }}
+                  outputs={results}
+                />
+                
+                <Button variant="outline" onClick={exportToPDF} data-testid="swp-export-pdf-btn">
                   <Download className="w-4 h-4 mr-2" />
-                  Export PDF
+                  PDF
                 </Button>
-                <Button variant="outline" onClick={exportToExcel} className="flex-1" data-testid="swp-export-excel-btn">
+                <Button variant="outline" onClick={exportToExcel} data-testid="swp-export-excel-btn">
                   <Download className="w-4 h-4 mr-2" />
-                  Export Excel
+                  Excel
                 </Button>
               </div>
             </div>
