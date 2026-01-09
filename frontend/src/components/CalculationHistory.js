@@ -88,4 +88,103 @@ export default function CalculationHistory() {
         </p>
       </Card>
     );
-  }\n\n  return (\n    <div className=\"space-y-6\">\n      <div className=\"text-center mb-8\">\n        <h2 className=\"text-3xl md:text-4xl font-black text-slate-800 dark:text-slate-100 mb-3\" style={{fontFamily: 'Manrope, sans-serif'}}>\n          Calculation History\n        </h2>\n        <p className=\"text-lg text-slate-600 dark:text-slate-400\">Your saved financial calculations</p>\n      </div>\n\n      <div className=\"grid grid-cols-1 md:grid-cols-2 gap-6\">\n        {calculations.map((calc) => (\n          <Card\n            key={calc.id}\n            className=\"p-6 bg-white dark:bg-slate-900 shadow-xl border-2 border-slate-200 dark:border-slate-800 hover:shadow-2xl transition-all duration-300\"\n            data-testid={`calculation-${calc.id}`}\n          >\n            <div className=\"flex items-start justify-between mb-4\">\n              <div className=\"flex items-center gap-3\">\n                {getCalculatorIcon(calc.calculator_type)}\n                <div>\n                  <h3 className=\"text-lg font-bold text-slate-800 dark:text-slate-100\">\n                    {calc.name || calc.calculator_type.toUpperCase()}\n                  </h3>\n                  <p className=\"text-xs text-slate-500\">\n                    {new Date(calc.timestamp).toLocaleDateString('en-IN', {\n                      year: 'numeric',\n                      month: 'short',\n                      day: 'numeric',\n                      hour: '2-digit',\n                      minute: '2-digit',\n                    })}\n                  </p>\n                </div>\n              </div>\n              <Button\n                variant=\"ghost\"\n                size=\"sm\"\n                onClick={() => deleteCalculation(calc.id)}\n                className=\"text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30\"\n                data-testid={`delete-calculation-${calc.id}`}\n              >\n                <Trash2 className=\"w-4 h-4\" />\n              </Button>\n            </div>\n\n            <div className=\"space-y-2 text-sm\">\n              {calc.calculator_type === 'sip' && (\n                <>\n                  <div className=\"flex justify-between\">\n                    <span className=\"text-slate-600 dark:text-slate-400\">Monthly Investment:</span>\n                    <span className=\"font-bold text-slate-800 dark:text-slate-100\">\n                      {formatINR(calc.inputs.monthlyInvestment)}\n                    </span>\n                  </div>\n                  <div className=\"flex justify-between\">\n                    <span className=\"text-slate-600 dark:text-slate-400\">Duration:</span>\n                    <span className=\"font-bold text-slate-800 dark:text-slate-100\">\n                      {calc.inputs.duration} years\n                    </span>\n                  </div>\n                  <div className=\"flex justify-between border-t pt-2 mt-2\">\n                    <span className=\"text-slate-600 dark:text-slate-400\">Total Value:</span>\n                    <span className=\"font-bold text-blue-600 dark:text-blue-400\">\n                      {formatINR(calc.outputs.totalValue)}\n                    </span>\n                  </div>\n                </>\n              )}\n\n              {calc.calculator_type === 'swp' && (\n                <>\n                  <div className=\"flex justify-between\">\n                    <span className=\"text-slate-600 dark:text-slate-400\">Lumpsum:</span>\n                    <span className=\"font-bold text-slate-800 dark:text-slate-100\">\n                      {formatINR(calc.inputs.lumpsumInvestment)}\n                    </span>\n                  </div>\n                  <div className=\"flex justify-between\">\n                    <span className=\"text-slate-600 dark:text-slate-400\">Duration:</span>\n                    <span className=\"font-bold text-slate-800 dark:text-slate-100\">\n                      {calc.inputs.duration} years\n                    </span>\n                  </div>\n                  <div className=\"flex justify-between border-t pt-2 mt-2\">\n                    <span className=\"text-slate-600 dark:text-slate-400\">Remaining Value:</span>\n                    <span className=\"font-bold text-emerald-600 dark:text-emerald-400\">\n                      {formatINR(calc.outputs.remainingValue)}\n                    </span>\n                  </div>\n                </>\n              )}\n            </div>\n          </Card>\n        ))}\n      </div>\n    </div>\n  );\n}"
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="text-center mb-8">
+        <h2 className="text-3xl md:text-4xl font-black text-slate-800 dark:text-slate-100 mb-3" style={{fontFamily: 'Manrope, sans-serif'}}>
+          Calculation History
+        </h2>
+        <p className="text-lg text-slate-600 dark:text-slate-400">Your saved financial calculations</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {calculations.map((calc) => (
+          <Card
+            key={calc.id}
+            className="p-6 bg-white dark:bg-slate-900 shadow-xl border-2 border-slate-200 dark:border-slate-800 hover:shadow-2xl transition-all duration-300"
+            data-testid={`calculation-${calc.id}`}
+          >
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-3">
+                {getCalculatorIcon(calc.calculator_type)}
+                <div>
+                  <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">
+                    {calc.name || calc.calculator_type.toUpperCase()}
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    {new Date(calc.timestamp).toLocaleDateString('en-IN', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => deleteCalculation(calc.id)}
+                className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30"
+                data-testid={`delete-calculation-${calc.id}`}
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </div>
+
+            <div className="space-y-2 text-sm">
+              {calc.calculator_type === 'sip' && (
+                <>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600 dark:text-slate-400">Monthly Investment:</span>
+                    <span className="font-bold text-slate-800 dark:text-slate-100">
+                      {formatINR(calc.inputs.monthlyInvestment)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600 dark:text-slate-400">Duration:</span>
+                    <span className="font-bold text-slate-800 dark:text-slate-100">
+                      {calc.inputs.duration} years
+                    </span>
+                  </div>
+                  <div className="flex justify-between border-t pt-2 mt-2">
+                    <span className="text-slate-600 dark:text-slate-400">Total Value:</span>
+                    <span className="font-bold text-blue-600 dark:text-blue-400">
+                      {formatINR(calc.outputs.totalValue)}
+                    </span>
+                  </div>
+                </>
+              )}
+
+              {calc.calculator_type === 'swp' && (
+                <>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600 dark:text-slate-400">Lumpsum:</span>
+                    <span className="font-bold text-slate-800 dark:text-slate-100">
+                      {formatINR(calc.inputs.lumpsumInvestment)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600 dark:text-slate-400">Duration:</span>
+                    <span className="font-bold text-slate-800 dark:text-slate-100">
+                      {calc.inputs.duration} years
+                    </span>
+                  </div>
+                  <div className="flex justify-between border-t pt-2 mt-2">
+                    <span className="text-slate-600 dark:text-slate-400">Remaining Value:</span>
+                    <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                      {formatINR(calc.outputs.remainingValue)}
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
