@@ -98,18 +98,6 @@ export default function CalculationHistory() {
     );
   }
 
-  if (calculations.length === 0) {
-    return (
-      <Card className="p-12 text-center bg-white dark:bg-slate-900 shadow-xl border-2 border-slate-200 dark:border-slate-800">
-        <History className="w-16 h-16 mx-auto mb-4 text-slate-400 opacity-50" />
-        <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">No Calculations Yet</h3>
-        <p className="text-slate-600 dark:text-slate-400">
-          Your saved calculations will appear here
-        </p>
-      </Card>
-    );
-  }
-
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
@@ -119,8 +107,86 @@ export default function CalculationHistory() {
         <p className="text-lg text-slate-600 dark:text-slate-400">Your saved financial calculations</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {calculations.map((calc) => (
+      {/* Search and Filter Bar */}
+      <Card className="p-4 bg-white dark:bg-slate-900 shadow-xl border-2 border-slate-200 dark:border-slate-800">
+        <div className="space-y-4">
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <Input
+              placeholder="Search by name or notes..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 h-12 text-base"
+              data-testid="search-calculations"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2"
+              >
+                <X className="w-5 h-5 text-slate-400 hover:text-slate-600" />
+              </button>
+            )}
+          </div>
+
+          {/* Tag Filters */}
+          {allTags.length > 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                <Tag className="w-4 h-4" />
+                Filter by tag:
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Badge
+                  variant={selectedTag === null ? "default" : "outline"}
+                  className={`cursor-pointer ${selectedTag === null ? 'bg-purple-600 text-white' : ''}`}
+                  onClick={() => setSelectedTag(null)}
+                  data-testid="tag-filter-all"
+                >
+                  All ({calculations.length})
+                </Badge>
+                {allTags.map((tag) => {
+                  const count = calculations.filter(c => c.tags && c.tags.includes(tag)).length;
+                  return (
+                    <Badge
+                      key={tag}
+                      variant={selectedTag === tag ? "default" : "outline"}
+                      className={`cursor-pointer ${selectedTag === tag ? 'bg-purple-600 text-white' : ''}`}
+                      onClick={() => setSelectedTag(tag)}
+                      data-testid={`tag-filter-${tag}`}
+                    >
+                      {tag} ({count})
+                    </Badge>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      </Card>
+
+      {/* Results Count */}
+      <div className="text-sm text-slate-600 dark:text-slate-400">
+        Showing {filteredCalculations.length} of {calculations.length} calculations
+      </div>
+
+      {filteredCalculations.length === 0 ? (
+        <Card className="p-12 text-center bg-white dark:bg-slate-900 shadow-xl border-2 border-slate-200 dark:border-slate-800">
+          <History className="w-16 h-16 mx-auto mb-4 text-slate-400 opacity-50" />
+          <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">
+            {calculations.length === 0 ? 'No Calculations Yet' : 'No Matching Calculations'}
+          </h3>
+          <p className="text-slate-600 dark:text-slate-400">
+            {calculations.length === 0 
+              ? 'Your saved calculations will appear here'
+              : 'Try adjusting your search or filters'
+            }
+          </p>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {filteredCalculations.map((calc) => (
           <Card
             key={calc.id}
             className="p-6 bg-white dark:bg-slate-900 shadow-xl border-2 border-slate-200 dark:border-slate-800 hover:shadow-2xl transition-all duration-300"
