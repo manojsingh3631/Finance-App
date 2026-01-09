@@ -4,11 +4,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
-import { TrendingUp, Target, Download, Info } from "lucide-react";
+import { TrendingUp, Target, Download, Info, Wallet } from "lucide-react";
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -23,7 +25,8 @@ const formatINR = (amount) => {
 };
 
 const COLORS = {
-  invested: '#3b82f6',
+  lumpsumInvested: '#8b5cf6',
+  sipInvested: '#3b82f6',
   returns: '#10b981',
   inflationImpact: '#f59e0b'
 };
@@ -44,6 +47,10 @@ export default function SIPCalculator({ onCalculate }) {
   const [results, setResults] = useState(null);
   const [showGoalPlanner, setShowGoalPlanner] = useState(false);
   const [targetAmount, setTargetAmount] = useState(5000000);
+  
+  // New state for lump sum feature
+  const [includeLumpsum, setIncludeLumpsum] = useState(false);
+  const [lumpsumAmount, setLumpsumAmount] = useState(100000);
 
   const calculateSIP = () => {
     const adjustedReturn = expectedReturn + RISK_PROFILES[riskProfile].returnAdjustment;
