@@ -383,6 +383,42 @@ export default function SWPCalculator({ onCalculate, sipData }) {
             </div>
           )}
 
+          {/* Inflation-Adjusted Withdrawal Toggle */}
+          <div className="p-4 rounded-xl bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/30 dark:to-orange-900/20 border-2 border-orange-200 dark:border-orange-800">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                <Label className="text-sm font-bold text-slate-800 dark:text-slate-100">Inflation-Adjusted Withdrawals</Label>
+                <TooltipProvider>
+                  <UITooltip>
+                    <TooltipTrigger>
+                      <Info className="w-4 h-4 text-slate-400" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Automatically increase withdrawals yearly to keep pace with inflation</p>
+                    </TooltipContent>
+                  </UITooltip>
+                </TooltipProvider>
+              </div>
+              <Switch
+                checked={inflationAdjustedWithdrawal}
+                onCheckedChange={setInflationAdjustedWithdrawal}
+                data-testid="swp-inflation-adjusted-switch"
+              />
+            </div>
+            
+            {inflationAdjustedWithdrawal && (
+              <Alert className="bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800">
+                <Info className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <AlertDescription className="text-xs text-blue-800 dark:text-blue-300">
+                  Your withdrawals will increase by {inflation}% each year to maintain purchasing power. 
+                  Starting: {formatINR(getActualMonthlyWithdrawal())}/month → 
+                  Year {duration}: {formatINR(Math.round(getActualMonthlyWithdrawal() * Math.pow(1 + inflation/100, duration)))}/month
+                </AlertDescription>
+              </Alert>
+            )}
+          </div>
+
           {/* Expected Return */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
