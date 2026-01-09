@@ -407,6 +407,42 @@ export default function SIPCalculator({ onCalculate }) {
 
           {results ? (
             <div className="space-y-6">
+              {/* Breakdown if lumpsum is included */}
+              {results.includeLumpsum && (
+                <div className="p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-950/30 dark:to-indigo-900/20 border-2 border-indigo-200 dark:border-indigo-800">
+                  <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
+                    <Wallet className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                    Investment Breakdown
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Current Savings</p>
+                      <p className="text-lg font-bold text-purple-600 dark:text-purple-400" data-testid="sip-lumpsum-invested">
+                        {formatINR(results.lumpsumInvested)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Lumpsum Future Value</p>
+                      <p className="text-lg font-bold text-purple-600 dark:text-purple-400" data-testid="sip-lumpsum-future-value">
+                        {formatINR(results.lumpsumFutureValue)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">SIP Invested</p>
+                      <p className="text-lg font-bold text-blue-600 dark:text-blue-400" data-testid="sip-sip-invested">
+                        {formatINR(results.sipInvested)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">SIP Future Value</p>
+                      <p className="text-lg font-bold text-blue-600 dark:text-blue-400" data-testid="sip-sip-future-value">
+                        {formatINR(results.sipFutureValue)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Output Values */}
               <div className="grid grid-cols-1 gap-4">
                 <div className="p-4 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800">
@@ -414,6 +450,11 @@ export default function SIPCalculator({ onCalculate }) {
                   <p className="text-2xl font-bold text-blue-600 dark:text-blue-400" data-testid="sip-total-invested">
                     {formatINR(results.totalInvested)}
                   </p>
+                  {results.includeLumpsum && (
+                    <p className="text-xs text-slate-500 mt-1">
+                      (Savings: {formatINR(results.lumpsumInvested)} + SIP: {formatINR(results.sipInvested)})
+                    </p>
+                  )}
                 </div>
 
                 <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800">
@@ -421,13 +462,23 @@ export default function SIPCalculator({ onCalculate }) {
                   <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="sip-estimated-returns">
                     {formatINR(results.estimatedReturns)}
                   </p>
+                  {results.includeLumpsum && (
+                    <p className="text-xs text-slate-500 mt-1">
+                      (From Savings: {formatINR(results.lumpsumReturns)} + From SIP: {formatINR(results.sipReturns)})
+                    </p>
+                  )}
                 </div>
 
                 <div className="p-4 rounded-xl bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800">
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Total Portfolio Value</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Combined Total Future Value</p>
                   <p className="text-2xl font-bold text-purple-600 dark:text-purple-400" data-testid="sip-total-value">
                     {formatINR(results.totalValue)}
                   </p>
+                  {results.includeLumpsum && (
+                    <p className="text-xs text-slate-500 mt-1">
+                      (Savings Growth: {formatINR(results.lumpsumFutureValue)} + SIP Growth: {formatINR(results.sipFutureValue)})
+                    </p>
+                  )}
                 </div>
 
                 <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
