@@ -56,12 +56,16 @@ class CalculationSave(BaseModel):
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     name: Optional[str] = None
     user_id: Optional[str] = None  # Associate with user
+    tags: List[str] = Field(default_factory=list)  # Tags for categorization
+    notes: Optional[str] = None  # Optional notes
 
 class CalculationCreate(BaseModel):
     calculator_type: str
     inputs: dict
     outputs: dict
     name: Optional[str] = None
+    tags: List[str] = Field(default_factory=list)
+    notes: Optional[str] = None
 
 class StatusCheck(BaseModel):
     model_config = ConfigDict(extra="ignore")
