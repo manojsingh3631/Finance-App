@@ -301,6 +301,7 @@ export default function CalculationHistory() {
           </Card>
         ))}
       </div>
+      )}
     </div>
   );
 }
