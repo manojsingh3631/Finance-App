@@ -241,9 +241,37 @@ async def logout(request: Request, response: Response):
 async def root():
     return {"message": "Financial Calculator API"}
 
+@api_router.post("/status", response_model=StatusCheck)
+async def create_status_check(input: StatusCheckCreate):
+    status_dict = input.model_dump()
+    status_obj = StatusCheck(**status_dict)
+    
+    # Convert to dict and serialize datetime to ISO string for MongoDB
+    doc = status_obj.model_dump()
+    doc['timestamp'] = doc['timestamp'].isoformat()
+    
+    _ = await db.status_checks.insert_one(doc)
+    return status_obj
+
+@api_router.get("/status", response_model=List[StatusCheck])
+async def get_status_checks():
+    # Exclude MongoDB's _id field from the query results
+    status_checks = await db.status_checks.find({}, {"_id": 0}).to_list(1000)
+    
+    # Convert ISO string timestamps back to datetime objects
+    for check in status_checks:
+        if isinstance(check['timestamp'], str):
+            check['timestamp'] = datetime.fromisoformat(check['timestamp'])
+    
+    return status_checks
+
 @api_router.post("/calculations", response_model=CalculationSave)
-async def save_calculation(input: CalculationCreate):
+async def save_calculation(input: CalculationCreate, request: Request):
+    """Save calculation (requires authentication)"""
+    user = await get_current_user(request)
+    
     calc_dict = input.model_dump()
+    calc_dict['user_id'] = user.user_id  # Associate with user
     calc_obj = CalculationSave(**calc_dict)
     
     doc = calc_obj.model_dump()
@@ -253,8 +281,14 @@ async def save_calculation(input: CalculationCreate):
     return calc_obj
 
 @api_router.get("/calculations", response_model=List[CalculationSave])
-async def get_calculations():
-    calculations = await db.calculations.find({}, {"_id": 0}).to_list(100)
+async def get_calculations(request: Request):
+    """Get user's calculations (requires authentication)"""
+    user = await get_current_user(request)
+    
+    calculations = await db.calculations.find(
+        {"user_id": user.user_id},
+        {"_id": 0}
+    ).sort("timestamp", -1).to_list(100)
     
     for calc in calculations:
         if isinstance(calc['timestamp'], str):
@@ -263,8 +297,14 @@ async def get_calculations():
     return calculations
 
 @api_router.delete("/calculations/{calc_id}")
-async def delete_calculation(calc_id: str):
-    result = await db.calculations.delete_one({"id": calc_id})
+async def delete_calculation(calc_id: str, request: Request):
+    """Delete user's calculation (requires authentication)"""
+    user = await get_current_user(request)
+    
+    result = await db.calculations.delete_one({
+        "id": calc_id,
+        "user_id": user.user_id  # Ensure user owns this calculation
+    })
     return {"deleted": result.deleted_count > 0}
 
 # Include the router in the main app
