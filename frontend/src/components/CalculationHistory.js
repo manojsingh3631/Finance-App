@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { History, Trash2, TrendingUp, TrendingDown, Loader2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { History, Trash2, TrendingUp, TrendingDown, Loader2, Tag, Search, X, StickyNote } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 
 const formatINR = (amount) => {
