@@ -200,11 +200,16 @@ export default function SIPCalculator({ onCalculate }) {
     toast.success('Excel exported successfully');
   };
 
-  const chartData = results ? [
-    { name: 'Invested Amount', value: results.totalInvested, color: COLORS.invested },
-    { name: 'Returns Earned', value: results.estimatedReturns, color: COLORS.returns },
-    { name: 'Inflation Impact', value: results.inflationImpact, color: COLORS.inflationImpact }
-  ] : [];
+  const chartData = results ? (
+    results.includeLumpsum ? [
+      { name: 'Lumpsum Invested', value: results.lumpsumInvested, color: COLORS.lumpsumInvested },
+      { name: 'SIP Invested', value: results.sipInvested, color: COLORS.sipInvested },
+      { name: 'Returns Earned', value: results.estimatedReturns, color: COLORS.returns }
+    ] : [
+      { name: 'Invested Amount', value: results.totalInvested, color: COLORS.sipInvested },
+      { name: 'Returns Earned', value: results.estimatedReturns, color: COLORS.returns }
+    ]
+  ) : [];
 
   const goalPlannerData = showGoalPlanner ? calculateGoalSIP() : null;
 
@@ -220,6 +225,57 @@ export default function SIPCalculator({ onCalculate }) {
         </div>
 
         <div className="space-y-6">
+          {/* Include Current Savings Toggle */}
+          <div className="p-4 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/30 dark:to-purple-900/20 border-2 border-purple-200 dark:border-purple-800">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Wallet className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                <Label className="text-sm font-bold text-slate-800 dark:text-slate-100">Include Current Savings/Portfolio</Label>
+                <TooltipProvider>
+                  <UITooltip>
+                    <TooltipTrigger>
+                      <Info className="w-4 h-4 text-slate-400" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Add your existing savings or lump sum investment</p>
+                    </TooltipContent>
+                  </UITooltip>
+                </TooltipProvider>
+              </div>
+              <Switch
+                checked={includeLumpsum}
+                onCheckedChange={setIncludeLumpsum}
+                data-testid="sip-include-lumpsum-switch"
+              />
+            </div>
+            
+            {includeLumpsum && (
+              <div className="space-y-3 mt-4">
+                <Alert className="bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800">
+                  <Info className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <AlertDescription className="text-xs text-blue-800 dark:text-blue-300">
+                    Your existing savings will grow alongside your monthly SIP investments
+                  </AlertDescription>
+                </Alert>
+                <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Current Savings/Lumpsum Amount (₹)</Label>
+                <Input
+                  type="number"
+                  value={lumpsumAmount}
+                  onChange={(e) => setLumpsumAmount(Number(e.target.value))}
+                  className="text-lg font-semibold h-12 bg-white dark:bg-slate-900"
+                  data-testid="sip-lumpsum-amount-input"
+                />
+                <Slider
+                  value={[lumpsumAmount]}
+                  onValueChange={([value]) => setLumpsumAmount(value)}
+                  min={10000}
+                  max={10000000}
+                  step={10000}
+                  data-testid="sip-lumpsum-amount-slider"
+                />
+              </div>
+            )}
+          </div>
           {/* Monthly Investment */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
