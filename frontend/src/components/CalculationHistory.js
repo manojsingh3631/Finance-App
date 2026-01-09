@@ -76,6 +76,20 @@ export default function CalculationHistory() {
     }
   };
 
+  // Get all unique tags
+  const allTags = [...new Set(calculations.flatMap(calc => calc.tags || []))];
+
+  // Filter calculations
+  const filteredCalculations = calculations.filter(calc => {
+    const matchesSearch = !searchTerm || 
+      calc.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      calc.notes?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesTag = !selectedTag || (calc.tags && calc.tags.includes(selectedTag));
+    
+    return matchesSearch && matchesTag;
+  });
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
