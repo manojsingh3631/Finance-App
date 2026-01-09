@@ -74,19 +74,48 @@ export default function SWPCalculator({ onCalculate, sipData }) {
     const adjustedReturn = expectedReturn + RISK_PROFILES[riskProfile].returnAdjustment;
     const monthlyRate = adjustedReturn / 100 / 12;
     const months = duration * 12;
-    const actualMonthlyWithdrawal = getActualMonthlyWithdrawal();
+    const initialMonthlyWithdrawal = getActualMonthlyWithdrawal();
+    const inflationRate = inflation / 100;
     
     let balance = lumpsumInvestment;
     let totalWithdrawals = 0;
     let totalReturns = 0;
     let exhausted = false;
     let exhaustionMonth = 0;
+    let currentYearlyWithdrawal = initialMonthlyWithdrawal * 12;
+    let currentMonthlyWithdrawal = initialMonthlyWithdrawal;
+    
+    // Track year-wise withdrawal schedule
+    const withdrawalSchedule = [];
     
     for (let month = 1; month <= months; month++) {
       const monthlyReturn = balance * monthlyRate;
       totalReturns += monthlyReturn;
-      balance = balance + monthlyReturn - actualMonthlyWithdrawal;
-      totalWithdrawals += actualMonthlyWithdrawal;
+      balance = balance + monthlyReturn - currentMonthlyWithdrawal;
+      totalWithdrawals += currentMonthlyWithdrawal;
+      
+      // Increase withdrawal at end of each year if inflation-adjusted is enabled
+      if (inflationAdjustedWithdrawal && month % 12 === 0) {
+        const year = month / 12;
+        withdrawalSchedule.push({
+          year,
+          monthlyWithdrawal: Math.round(currentMonthlyWithdrawal),
+          yearlyWithdrawal: Math.round(currentYearlyWithdrawal),
+          portfolioBalance: Math.round(balance)
+        });
+        
+        // Increase for next year
+        currentYearlyWithdrawal = currentYearlyWithdrawal * (1 + inflationRate);
+        currentMonthlyWithdrawal = currentYearlyWithdrawal / 12;
+      } else if (!inflationAdjustedWithdrawal && month % 12 === 0) {
+        const year = month / 12;
+        withdrawalSchedule.push({
+          year,
+          monthlyWithdrawal: Math.round(currentMonthlyWithdrawal),
+          yearlyWithdrawal: Math.round(currentYearlyWithdrawal),
+          portfolioBalance: Math.round(balance)
+        });
+      }
       
       if (balance <= 0 && !exhausted) {
         exhausted = true;
@@ -96,7 +125,7 @@ export default function SWPCalculator({ onCalculate, sipData }) {
       }
     }
     
-    const exhaustionProbability = exhausted ? 100 : (actualMonthlyWithdrawal * 12 / (lumpsumInvestment * (adjustedReturn / 100))) > 0.8 ? 60 : 20;
+    const exhaustionProbability = exhausted ? 100 : (initialMonthlyWithdrawal * 12 / (lumpsumInvestment * (adjustedReturn / 100))) > 0.8 ? 60 : 20;
     
     const calculatedResults = {
       totalWithdrawals: Math.round(totalWithdrawals),
@@ -105,7 +134,10 @@ export default function SWPCalculator({ onCalculate, sipData }) {
       exhausted,
       exhaustionMonth,
       exhaustionProbability,
-      monthlyWithdrawal: actualMonthlyWithdrawal
+      monthlyWithdrawal: initialMonthlyWithdrawal,
+      finalMonthlyWithdrawal: Math.round(currentMonthlyWithdrawal),
+      withdrawalSchedule,
+      inflationAdjustedWithdrawal
     };
     
     setResults(calculatedResults);
@@ -113,14 +145,15 @@ export default function SWPCalculator({ onCalculate, sipData }) {
       type: 'swp',
       inputs: { 
         lumpsumInvestment, 
-        monthlyWithdrawal: actualMonthlyWithdrawal, 
+        monthlyWithdrawal: initialMonthlyWithdrawal, 
         expectedReturn: adjustedReturn, 
         duration, 
         inflation, 
         riskProfile,
         withdrawalMode,
         yearlyWithdrawalPercent: withdrawalMode === 'percentage' ? yearlyWithdrawalPercent : null,
-        sipImported
+        sipImported,
+        inflationAdjustedWithdrawal
       },
       outputs: calculatedResults
     });
