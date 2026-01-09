@@ -579,6 +579,61 @@ export default function SWPCalculator({ onCalculate, sipData }) {
                 </ResponsiveContainer>
               </div>
 
+              {/* Withdrawal Schedule Button (if inflation-adjusted) */}
+              {results.inflationAdjustedWithdrawal && results.withdrawalSchedule && results.withdrawalSchedule.length > 0 && (
+                <Dialog open={showWithdrawalSchedule} onOpenChange={setShowWithdrawalSchedule}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="w-full" data-testid="swp-view-schedule-btn">
+                      <TrendingUp className="w-4 h-4 mr-2" />
+                      View Year-Wise Withdrawal Schedule
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="bg-white dark:bg-slate-800 max-w-3xl max-h-[80vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>Inflation-Adjusted Withdrawal Schedule</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 mt-4">
+                      <Alert className="bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800">
+                        <Info className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                        <AlertDescription className="text-xs text-orange-800 dark:text-orange-300">
+                          Withdrawals increase by {inflation}% annually to maintain purchasing power against inflation
+                        </AlertDescription>
+                      </Alert>
+                      
+                      {/* Table */}
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-slate-200 dark:border-slate-700">
+                              <th className="text-left p-2 font-bold text-slate-800 dark:text-slate-100">Year</th>
+                              <th className="text-right p-2 font-bold text-slate-800 dark:text-slate-100">Monthly Withdrawal</th>
+                              <th className="text-right p-2 font-bold text-slate-800 dark:text-slate-100">Yearly Withdrawal</th>
+                              <th className="text-right p-2 font-bold text-slate-800 dark:text-slate-100">Portfolio Balance</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {results.withdrawalSchedule.map((item) => (
+                              <tr key={item.year} className="border-b border-slate-100 dark:border-slate-800">
+                                <td className="p-2 text-slate-700 dark:text-slate-300">Year {item.year}</td>
+                                <td className="p-2 text-right text-slate-800 dark:text-slate-100 font-semibold">
+                                  {formatINR(item.monthlyWithdrawal)}
+                                </td>
+                                <td className="p-2 text-right text-slate-800 dark:text-slate-100">
+                                  {formatINR(item.yearlyWithdrawal)}
+                                </td>
+                                <td className="p-2 text-right text-blue-600 dark:text-blue-400 font-semibold">
+                                  {formatINR(item.portfolioBalance)}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              )}
+
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-3">
                 <Button variant="outline" onClick={exportToPDF} className="flex-1" data-testid="swp-export-pdf-btn">
