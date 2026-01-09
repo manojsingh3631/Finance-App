@@ -193,22 +193,40 @@ export default function CalculationHistory() {
             data-testid={`calculation-${calc.id}`}
           >
             <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center gap-3">
-                {getCalculatorIcon(calc.calculator_type)}
-                <div>
-                  <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">
-                    {calc.name || calc.calculator_type.toUpperCase()}
-                  </h3>
-                  <p className="text-xs text-slate-500">
-                    {new Date(calc.timestamp).toLocaleDateString('en-IN', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </p>
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-2">
+                  {getCalculatorIcon(calc.calculator_type)}
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">
+                      {calc.name || calc.calculator_type.toUpperCase()}
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      {new Date(calc.timestamp).toLocaleDateString('en-IN', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </p>
+                  </div>
                 </div>
+                
+                {/* Tags */}
+                {calc.tags && calc.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {calc.tags.map((tag) => (
+                      <Badge
+                        key={tag}
+                        variant="secondary"
+                        className="text-xs bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300"
+                        data-testid={`calc-tag-${tag}`}
+                      >
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
               </div>
               <Button
                 variant="ghost"
@@ -220,6 +238,18 @@ export default function CalculationHistory() {
                 <Trash2 className="w-4 h-4" />
               </Button>
             </div>
+
+            {/* Notes Preview */}
+            {calc.notes && (
+              <div className="mb-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800">
+                <div className="flex items-start gap-2">
+                  <StickyNote className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-slate-700 dark:text-slate-300 line-clamp-2">
+                    {calc.notes}
+                  </p>
+                </div>
+              </div>
+            )}
 
             <div className="space-y-2 text-sm">
               {calc.calculator_type === 'sip' && (
