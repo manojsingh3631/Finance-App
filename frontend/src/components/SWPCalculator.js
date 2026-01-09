@@ -4,12 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
-import { TrendingDown, Download, Info, AlertTriangle } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid } from "recharts";
+import { TrendingDown, Download, Info, AlertTriangle, TrendingUp } from "lucide-react";
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -46,6 +48,10 @@ export default function SWPCalculator({ onCalculate, sipData }) {
   const [withdrawalMode, setWithdrawalMode] = useState('fixed'); // 'fixed' or 'percentage'
   const [yearlyWithdrawalPercent, setYearlyWithdrawalPercent] = useState(6);
   const [sipImported, setSipImported] = useState(false);
+  
+  // New state for inflation-adjusted withdrawals
+  const [inflationAdjustedWithdrawal, setInflationAdjustedWithdrawal] = useState(false);
+  const [showWithdrawalSchedule, setShowWithdrawalSchedule] = useState(false);
 
   const importFromSIP = () => {
     if (sipData && sipData.outputs) {
