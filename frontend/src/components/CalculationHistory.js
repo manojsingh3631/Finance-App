@@ -29,6 +29,9 @@ const getCalculatorIcon = (type) => {
 export default function CalculationHistory() {
   const [calculations, setCalculations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedTag, setSelectedTag] = useState(null);
+  const [selectedCalc, setSelectedCalc] = useState(null);
 
   useEffect(() => {
     fetchCalculations();
