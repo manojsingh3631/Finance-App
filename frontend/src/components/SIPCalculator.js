@@ -528,10 +528,16 @@ export default function SIPCalculator({ onCalculate }) {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap gap-3">
+              <div className="grid grid-cols-2 gap-3">
+                <SaveCalculationDialog
+                  calculationType="sip"
+                  inputs={{ monthlyInvestment, expectedReturn, duration, stepUp, inflation, riskProfile, includeLumpsum, lumpsumAmount: includeLumpsum ? lumpsumAmount : 0 }}
+                  outputs={results}
+                />
+                
                 <Dialog open={showGoalPlanner} onOpenChange={setShowGoalPlanner}>
                   <DialogTrigger asChild>
-                    <Button variant="outline" className="flex-1" data-testid="sip-goal-planner-btn">
+                    <Button variant="outline" data-testid="sip-goal-planner-btn">
                       <Target className="w-4 h-4 mr-2" />
                       Goal Planner
                     </Button>
