@@ -38,7 +38,7 @@ const RISK_PROFILES = {
   aggressive: { label: 'Aggressive', returnAdjustment: 1 }
 };
 
-export default function SWPCalculator({ onCalculate, sipData }) {
+export default function SWPCalculator({ onCalculate, sipData, isGuestMode = false }) {
   const [lumpsumInvestment, setLumpsumInvestment] = useState(1000000);
   const [monthlyWithdrawal, setMonthlyWithdrawal] = useState(10000);
   const [expectedReturn, setExpectedReturn] = useState(10);
