@@ -38,7 +38,7 @@ const RISK_PROFILES = {
   aggressive: { label: 'Aggressive', returnAdjustment: 1, confidence: 70 }
 };
 
-export default function SIPCalculator({ onCalculate }) {
+export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
   const [monthlyInvestment, setMonthlyInvestment] = useState(10000);
   const [expectedReturn, setExpectedReturn] = useState(12);
   const [duration, setDuration] = useState(10);
