@@ -2,7 +2,7 @@ import { useState } from "react";
 import "@/App.css";
 import { ThemeProvider, useTheme } from "next-themes";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calculator, TrendingUp, TrendingDown, Target, BarChart3, Moon, Sun, ExternalLink, Grid3x3, History, LogOut } from "lucide-react";
+import { Calculator, TrendingUp, TrendingDown, Target, BarChart3, Moon, Sun, ExternalLink, Grid3x3, History, LogOut, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SIPCalculator from "@/components/SIPCalculator";
 import SWPCalculator from "@/components/SWPCalculator";
