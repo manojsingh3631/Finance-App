@@ -17,15 +17,28 @@ function AppRouter() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      
+      {/* Public calculator pages - no auth required */}
+      <Route path="/" element={<DashboardPage isGuestMode={true} />} />
+      <Route path="/calculators" element={<DashboardPage isGuestMode={true} />} />
+      
+      {/* Protected routes - require authentication */}
       <Route
         path="/dashboard"
         element={
           <ProtectedRoute>
-            <DashboardPage />
+            <DashboardPage isGuestMode={false} />
           </ProtectedRoute>
         }
       />
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route
+        path="/history"
+        element={
+          <ProtectedRoute>
+            <DashboardPage isGuestMode={false} activeTab="history" />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }
