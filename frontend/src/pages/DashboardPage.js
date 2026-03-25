@@ -37,26 +37,37 @@ function ThemeToggle() {
   );
 }
 
-export default function DashboardPage() {
+export default function DashboardPage({ isGuestMode = false, activeTab: initialTab = "sip" }) {
   const [sipData, setSipData] = useState(null);
   const [swpData, setSwpData] = useState(null);
-  const [activeTab, setActiveTab] = useState("sip");
-  const { user, logout } = useAuth();
+  const [activeTab, setActiveTab] = useState(initialTab);
+  const { user, logout, isAuthenticated } = useAuth();
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+      <div className="min-h-screen bg-slate-950 transition-colors duration-500">
         <div className="fixed top-6 right-6 z-50 flex items-center gap-3">
           <ThemeToggle />
-          <Button
-            onClick={logout}
-            variant="outline"
-            className="rounded-2xl font-semibold shadow-lg"
-            data-testid="logout-btn"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Logout
-          </Button>
+          {!isGuestMode && isAuthenticated ? (
+            <Button
+              onClick={logout}
+              variant="outline"
+              className="rounded-2xl font-semibold shadow-lg border-slate-700 hover:border-slate-600"
+              data-testid="logout-btn"
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Logout
+            </Button>
+          ) : (
+            <Button
+              onClick={() => window.location.href = '/login'}
+              className="rounded-2xl font-semibold shadow-lg bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700"
+              data-testid="guest-login-btn"
+            >
+              <LogIn className="w-4 h-4 mr-2" />
+              Sign In to Save
+            </Button>
+          )}
         </div>
         <Toaster position="top-center" />
         
@@ -73,11 +84,20 @@ export default function DashboardPage() {
                   className="h-16 md:h-20 mb-6 mx-auto md:mx-0"
                   data-testid="vittlit-logo"
                 />
-                <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-4 leading-tight" style={{fontFamily: 'Manrope, sans-serif'}}>
-                  Welcome, {user?.name?.split(' ')[0]}!
+                <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-4 leading-tight" style={{fontFamily: 'Inter, sans-serif'}}>
+                  {isGuestMode || !user ? 'Smart Financial' : `Welcome, ${user?.name?.split(' ')[0]}!`}
+                  {(isGuestMode || !user) && (
+                    <>
+                      <br />
+                      <span className="text-amber-300">Planning Tools</span>
+                    </>
+                  )}
                 </h1>
-                <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl" style={{fontFamily: 'Manrope, sans-serif'}}>
-                  Your financial planning dashboard
+                <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl" style={{fontFamily: 'Inter, sans-serif'}}>
+                  {isGuestMode || !user 
+                    ? 'Calculate returns, plan investments - Sign in to save your calculations'
+                    : 'Your financial planning dashboard'
+                  }
                 </p>
                 <Button 
                   asChild
@@ -105,10 +125,10 @@ export default function DashboardPage() {
         <div className="container mx-auto px-4 py-8 md:py-12 max-w-7xl">
           {/* Main Calculator Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full max-w-3xl mx-auto grid-cols-5 mb-8 h-16 bg-white dark:bg-slate-900 shadow-xl border border-slate-200 dark:border-slate-800 p-1.5 rounded-2xl" data-testid="calculator-tabs">
+            <TabsList className={`grid w-full max-w-3xl mx-auto ${isGuestMode || !isAuthenticated ? 'grid-cols-4' : 'grid-cols-5'} mb-8 h-16 bg-slate-900 shadow-xl border border-slate-800 p-1.5 rounded-2xl`} data-testid="calculator-tabs">
               <TabsTrigger 
                 value="sip" 
-                className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold"
+                className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300"
                 data-testid="sip-tab"
               >
                 <TrendingUp className="w-4 h-4 mr-2" />
@@ -116,7 +136,7 @@ export default function DashboardPage() {
               </TabsTrigger>
               <TabsTrigger 
                 value="swp" 
-                className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold"
+                className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300"
                 data-testid="swp-tab"
               >
                 <TrendingDown className="w-4 h-4 mr-2" />
@@ -124,7 +144,7 @@ export default function DashboardPage() {
               </TabsTrigger>
               <TabsTrigger 
                 value="compare" 
-                className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold"
+                className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300"
                 data-testid="compare-tab"
               >
                 <BarChart3 className="w-4 h-4 mr-2" />
@@ -132,28 +152,30 @@ export default function DashboardPage() {
               </TabsTrigger>
               <TabsTrigger 
                 value="more" 
-                className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-500 data-[state=active]:to-amber-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold"
+                className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-500 data-[state=active]:to-amber-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300"
                 data-testid="more-tools-tab"
               >
                 <Grid3x3 className="w-4 h-4 mr-2" />
                 More
               </TabsTrigger>
-              <TabsTrigger 
-                value="history" 
-                className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-indigo-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold"
-                data-testid="history-tab"
-              >
-                <History className="w-4 h-4 mr-2" />
-                History
-              </TabsTrigger>
+              {!isGuestMode && isAuthenticated && (
+                <TabsTrigger 
+                  value="history" 
+                  className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-indigo-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300"
+                  data-testid="history-tab"
+                >
+                  <History className="w-4 h-4 mr-2" />
+                  History
+                </TabsTrigger>
+              )}
             </TabsList>
 
             <TabsContent value="sip" className="mt-0">
-              <SIPCalculator onCalculate={setSipData} />
+              <SIPCalculator onCalculate={setSipData} isGuestMode={isGuestMode || !isAuthenticated} />
             </TabsContent>
 
             <TabsContent value="swp" className="mt-0">
-              <SWPCalculator onCalculate={setSwpData} sipData={sipData} />
+              <SWPCalculator onCalculate={setSwpData} sipData={sipData} isGuestMode={isGuestMode || !isAuthenticated} />
             </TabsContent>
 
             <TabsContent value="compare" className="mt-0">
@@ -164,9 +186,11 @@ export default function DashboardPage() {
               <MoreTools />
             </TabsContent>
 
-            <TabsContent value="history" className="mt-0">
-              <CalculationHistory />
-            </TabsContent>
+            {!isGuestMode && isAuthenticated && (
+              <TabsContent value="history" className="mt-0">
+                <CalculationHistory />
+              </TabsContent>
+            )}
           </Tabs>
         </div>
       </div>
