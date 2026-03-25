@@ -533,6 +533,7 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
                   calculationType="sip"
                   inputs={{ monthlyInvestment, expectedReturn, duration, stepUp, inflation, riskProfile, includeLumpsum, lumpsumAmount: includeLumpsum ? lumpsumAmount : 0 }}
                   outputs={results}
+                  isGuestMode={isGuestMode}
                 />
                 
                 <Dialog open={showGoalPlanner} onOpenChange={setShowGoalPlanner}>
