@@ -641,6 +641,7 @@ export default function SWPCalculator({ onCalculate, sipData, isGuestMode = fals
                   calculationType="swp"
                   inputs={{ lumpsumInvestment, monthlyWithdrawal: getActualMonthlyWithdrawal(), expectedReturn, duration, inflation, riskProfile, withdrawalMode, inflationAdjustedWithdrawal }}
                   outputs={results}
+                  isGuestMode={isGuestMode}
                 />
                 
                 <Button variant="outline" onClick={exportToPDF} data-testid="swp-export-pdf-btn">
