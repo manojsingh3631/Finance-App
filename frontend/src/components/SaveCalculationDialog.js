@@ -21,13 +21,27 @@ const SUGGESTED_TAGS = [
   'Health Insurance'
 ];
 
-export default function SaveCalculationDialog({ calculationType, inputs, outputs, onSaved }) {
+export default function SaveCalculationDialog({ calculationType, inputs, outputs, onSaved, isGuestMode = false }) {
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [name, setName] = useState('');
   const [tags, setTags] = useState([]);
   const [notes, setNotes] = useState('');
   const [customTag, setCustomTag] = useState('');
+
+  // Show login prompt for guests
+  if (isGuestMode) {
+    return (
+      <Button 
+        onClick={() => window.location.href = '/login'}
+        className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white"
+        data-testid="save-calculation-login-prompt"
+      >
+        <Save className="w-4 h-4 mr-2" />
+        Sign In to Save
+      </Button>
+    );
+  }
 
   const handleSave = async () => {
     if (!name.trim()) {
