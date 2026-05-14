@@ -78,35 +78,35 @@ export default function ComparisonView({ sipData, swpData }) {
               </div>
 
               <div className="space-y-3">
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center gap-3">
                   <span className="text-sm text-slate-600 dark:text-slate-400">Monthly Investment</span>
-                  <span className="text-base font-bold text-slate-800 dark:text-slate-100" data-testid="comparison-sip-monthly">
+                  <span className="text-base font-bold text-slate-800 dark:text-slate-100 text-right break-words" data-testid="comparison-sip-monthly">
                     {formatINR(sipData.inputs.monthlyInvestment)}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center gap-3">
                   <span className="text-sm text-slate-600 dark:text-slate-400">Total Invested</span>
-                  <span className="text-base font-bold text-slate-800 dark:text-slate-100" data-testid="comparison-sip-invested">
+                  <span className="text-base font-bold text-slate-800 dark:text-slate-100 text-right break-words" data-testid="comparison-sip-invested">
                     {formatINR(sipData.outputs.totalInvested)}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center gap-3">
                   <span className="text-sm text-slate-600 dark:text-slate-400">Returns Earned</span>
-                  <span className="text-base font-bold text-emerald-600 dark:text-emerald-400" data-testid="comparison-sip-returns">
+                  <span className="text-base font-bold text-emerald-600 dark:text-emerald-400 text-right break-words" data-testid="comparison-sip-returns">
                     {formatINR(sipData.outputs.estimatedReturns)}
                   </span>
                 </div>
                 <div className="pt-3 border-t-2 border-blue-300 dark:border-blue-700">
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center gap-3">
                     <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Final Portfolio Value</span>
-                    <span className="text-xl font-bold text-blue-600 dark:text-blue-400" data-testid="comparison-sip-final">
+                    <span className="text-xl font-bold text-blue-600 dark:text-blue-400 text-right break-words" data-testid="comparison-sip-final">
                       {formatINR(sipData.outputs.totalValue)}
                     </span>
                   </div>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center gap-3">
                   <span className="text-sm text-slate-600 dark:text-slate-400">Inflation-Adjusted</span>
-                  <span className="text-base font-bold text-slate-800 dark:text-slate-100" data-testid="comparison-sip-inflation-adjusted">
+                  <span className="text-base font-bold text-slate-800 dark:text-slate-100 text-right break-words" data-testid="comparison-sip-inflation-adjusted">
                     {formatINR(sipData.outputs.inflationAdjustedValue)}
                   </span>
                 </div>
@@ -132,34 +132,34 @@ export default function ComparisonView({ sipData, swpData }) {
               </div>
 
               <div className="space-y-3">
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center gap-3">
                   <span className="text-sm text-slate-600 dark:text-slate-400">Initial Investment</span>
-                  <span className="text-base font-bold text-slate-800 dark:text-slate-100" data-testid="comparison-swp-initial">
+                  <span className="text-base font-bold text-slate-800 dark:text-slate-100 text-right break-words" data-testid="comparison-swp-initial">
                     {formatINR(swpData.inputs.lumpsumInvestment)}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center gap-3">
                   <span className="text-sm text-slate-600 dark:text-slate-400">Monthly Withdrawal</span>
-                  <span className="text-base font-bold text-slate-800 dark:text-slate-100" data-testid="comparison-swp-monthly">
+                  <span className="text-base font-bold text-slate-800 dark:text-slate-100 text-right break-words" data-testid="comparison-swp-monthly">
                     {formatINR(swpData.inputs.monthlyWithdrawal)}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center gap-3">
                   <span className="text-sm text-slate-600 dark:text-slate-400">Total Withdrawals</span>
-                  <span className="text-base font-bold text-amber-600 dark:text-amber-400" data-testid="comparison-swp-withdrawals">
+                  <span className="text-base font-bold text-amber-600 dark:text-amber-400 text-right break-words" data-testid="comparison-swp-withdrawals">
                     {formatINR(swpData.outputs.totalWithdrawals)}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center gap-3">
                   <span className="text-sm text-slate-600 dark:text-slate-400">Returns Earned</span>
-                  <span className="text-base font-bold text-emerald-600 dark:text-emerald-400" data-testid="comparison-swp-returns">
+                  <span className="text-base font-bold text-emerald-600 dark:text-emerald-400 text-right break-words" data-testid="comparison-swp-returns">
                     {formatINR(swpData.outputs.returnsEarned)}
                   </span>
                 </div>
                 <div className="pt-3 border-t-2 border-emerald-300 dark:border-emerald-700">
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center gap-3">
                     <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Remaining Value</span>
-                    <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="comparison-swp-remaining">
+                    <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400 text-right break-words" data-testid="comparison-swp-remaining">
                       {formatINR(swpData.outputs.remainingValue)}
                     </span>
                   </div>

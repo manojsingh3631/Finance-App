@@ -228,10 +228,10 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
         <div className="space-y-4 md:space-y-6">
           {/* Include Current Savings Toggle */}
           <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/30 dark:to-purple-900/20 border-2 border-purple-200 dark:border-purple-800">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
+            <div className="flex items-start sm:items-center justify-between gap-3 mb-3">
+              <div className="flex items-start sm:items-center gap-2 min-w-0">
                 <Wallet className="w-4 h-4 md:w-5 md:h-5 text-purple-600 dark:text-purple-400" />
-                <Label className="text-xs md:text-sm font-bold text-slate-800 dark:text-slate-100">Include Current Savings/Portfolio</Label>
+                <Label className="text-xs md:text-sm font-bold text-slate-800 dark:text-slate-100 leading-tight">Include Current Savings/Portfolio</Label>
                 <TooltipProvider>
                   <UITooltip>
                     <TooltipTrigger>
@@ -415,28 +415,28 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
                     <Wallet className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                     Investment Breakdown
                   </h3>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Current Savings</p>
-                      <p className="text-lg font-bold text-purple-600 dark:text-purple-400" data-testid="sip-lumpsum-invested">
+                      <p className="text-base sm:text-lg font-bold text-purple-600 dark:text-purple-400 break-words" data-testid="sip-lumpsum-invested">
                         {formatINR(results.lumpsumInvested)}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Lumpsum Future Value</p>
-                      <p className="text-lg font-bold text-purple-600 dark:text-purple-400" data-testid="sip-lumpsum-future-value">
+                      <p className="text-base sm:text-lg font-bold text-purple-600 dark:text-purple-400 break-words" data-testid="sip-lumpsum-future-value">
                         {formatINR(results.lumpsumFutureValue)}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">SIP Invested</p>
-                      <p className="text-lg font-bold text-blue-600 dark:text-blue-400" data-testid="sip-sip-invested">
+                      <p className="text-base sm:text-lg font-bold text-blue-600 dark:text-blue-400 break-words" data-testid="sip-sip-invested">
                         {formatINR(results.sipInvested)}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">SIP Future Value</p>
-                      <p className="text-lg font-bold text-blue-600 dark:text-blue-400" data-testid="sip-sip-future-value">
+                      <p className="text-base sm:text-lg font-bold text-blue-600 dark:text-blue-400 break-words" data-testid="sip-sip-future-value">
                         {formatINR(results.sipFutureValue)}
                       </p>
                     </div>
@@ -448,7 +448,7 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
               <div className="grid grid-cols-1 gap-4">
                 <div className="p-4 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800">
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Total Invested</p>
-                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400" data-testid="sip-total-invested">
+                  <p className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400 break-words" data-testid="sip-total-invested">
                     {formatINR(results.totalInvested)}
                   </p>
                   {results.includeLumpsum && (
@@ -460,7 +460,7 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
 
                 <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800">
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Estimated Returns</p>
-                  <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="sip-estimated-returns">
+                  <p className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400 break-words" data-testid="sip-estimated-returns">
                     {formatINR(results.estimatedReturns)}
                   </p>
                   {results.includeLumpsum && (
@@ -472,7 +472,7 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
 
                 <div className="p-4 rounded-xl bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800">
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Combined Total Future Value</p>
-                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400" data-testid="sip-total-value">
+                  <p className="text-xl sm:text-2xl font-bold text-purple-600 dark:text-purple-400 break-words" data-testid="sip-total-value">
                     {formatINR(results.totalValue)}
                   </p>
                   {results.includeLumpsum && (
@@ -484,7 +484,7 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
 
                 <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Inflation-Adjusted Value</p>
-                  <p className="text-2xl font-bold text-amber-600 dark:text-amber-400" data-testid="sip-inflation-adjusted">
+                  <p className="text-xl sm:text-2xl font-bold text-amber-600 dark:text-amber-400 break-words" data-testid="sip-inflation-adjusted">
                     {formatINR(results.inflationAdjustedValue)}
                   </p>
                 </div>
@@ -505,7 +505,7 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
               </div>
 
               {/* Chart */}
-              <div className="h-64">
+              <div className="h-56 sm:h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -522,7 +522,7 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
                       ))}
                     </Pie>
                     <Tooltip formatter={(value) => formatINR(value)} />
-                    <Legend />
+                    <Legend wrapperStyle={{ fontSize: '12px' }} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -543,7 +543,7 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
                       Goal Planner
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="bg-white dark:bg-slate-800 max-w-sm mx-4">
+                  <DialogContent className="bg-white dark:bg-slate-800 w-[calc(100%-1rem)] sm:max-w-sm">
                     <DialogHeader>
                       <DialogTitle>Goal Planner</DialogTitle>
                     </DialogHeader>

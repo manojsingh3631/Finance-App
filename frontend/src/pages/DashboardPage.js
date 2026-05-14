@@ -46,26 +46,27 @@ export default function DashboardPage({ isGuestMode = false, activeTab: initialT
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <div className="min-h-screen bg-slate-950 transition-colors duration-500">
-        <div className="fixed top-6 right-6 z-50 flex items-center gap-3">
+        <div className="fixed top-3 left-3 right-3 sm:left-auto sm:right-4 md:top-6 md:right-6 z-50 flex items-center justify-end gap-2 md:gap-3">
           <ThemeToggle />
           {!isGuestMode && isAuthenticated ? (
             <Button
               onClick={logout}
               variant="outline"
-              className="rounded-2xl font-semibold shadow-lg border-slate-700 hover:border-slate-600"
+              className="h-10 md:h-11 px-3 md:px-4 rounded-2xl font-semibold shadow-lg border-slate-700 hover:border-slate-600"
               data-testid="logout-btn"
             >
               <LogOut className="w-4 h-4 mr-2" />
-              Logout
+              <span className="hidden sm:inline">Logout</span>
             </Button>
           ) : (
             <Button
               onClick={() => window.location.href = '/login'}
-              className="rounded-2xl font-semibold shadow-lg bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700"
+              className="h-10 md:h-11 px-3 md:px-4 rounded-2xl font-semibold shadow-lg bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700"
               data-testid="guest-login-btn"
             >
               <LogIn className="w-4 h-4 mr-2" />
-              Sign In to Save
+              <span className="hidden sm:inline">Sign In to Save</span>
+              <span className="sm:hidden">Sign In</span>
             </Button>
           )}
         </div>
@@ -123,13 +124,13 @@ export default function DashboardPage({ isGuestMode = false, activeTab: initialT
           </div>
         </div>
 
-        <div className="container mx-auto px-4 py-8 md:py-12 max-w-7xl">
+        <div className="container mx-auto px-3 sm:px-4 py-8 md:py-12 max-w-7xl">
           {/* Main Calculator Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className={`grid w-full max-w-3xl mx-auto ${isGuestMode || !isAuthenticated ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-2 md:grid-cols-5'} mb-8 h-auto min-h-[4rem] bg-slate-900 shadow-xl border border-slate-800 p-1.5 rounded-2xl gap-1`} data-testid="calculator-tabs">
               <TabsTrigger 
                 value="sip" 
-                className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300 text-xs md:text-sm py-3 px-2 md:px-4 flex flex-col md:flex-row items-center gap-1 md:gap-2"
+                className="min-w-0 rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300 text-xs md:text-sm py-3 px-1 sm:px-2 md:px-4 flex flex-col md:flex-row items-center gap-1 md:gap-2"
                 data-testid="sip-tab"
               >
                 <TrendingUp className="w-4 h-4" />
@@ -137,7 +138,7 @@ export default function DashboardPage({ isGuestMode = false, activeTab: initialT
               </TabsTrigger>
               <TabsTrigger 
                 value="swp" 
-                className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300 text-xs md:text-sm py-3 px-2 md:px-4 flex flex-col md:flex-row items-center gap-1 md:gap-2"
+                className="min-w-0 rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300 text-xs md:text-sm py-3 px-1 sm:px-2 md:px-4 flex flex-col md:flex-row items-center gap-1 md:gap-2"
                 data-testid="swp-tab"
               >
                 <TrendingDown className="w-4 h-4" />
@@ -145,7 +146,7 @@ export default function DashboardPage({ isGuestMode = false, activeTab: initialT
               </TabsTrigger>
               <TabsTrigger 
                 value="compare" 
-                className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300 text-xs md:text-sm py-3 px-2 md:px-4 flex flex-col md:flex-row items-center gap-1 md:gap-2"
+                className="min-w-0 rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300 text-xs md:text-sm py-3 px-1 sm:px-2 md:px-4 flex flex-col md:flex-row items-center gap-1 md:gap-2"
                 data-testid="compare-tab"
               >
                 <BarChart3 className="w-4 h-4" />
@@ -153,7 +154,7 @@ export default function DashboardPage({ isGuestMode = false, activeTab: initialT
               </TabsTrigger>
               <TabsTrigger 
                 value="more" 
-                className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-500 data-[state=active]:to-amber-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300 text-xs md:text-sm py-3 px-2 md:px-4 flex flex-col md:flex-row items-center gap-1 md:gap-2"
+                className="min-w-0 rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-500 data-[state=active]:to-amber-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300 text-xs md:text-sm py-3 px-1 sm:px-2 md:px-4 flex flex-col md:flex-row items-center gap-1 md:gap-2"
                 data-testid="more-tools-tab"
               >
                 <Grid3x3 className="w-4 h-4" />
@@ -162,7 +163,7 @@ export default function DashboardPage({ isGuestMode = false, activeTab: initialT
               {!isGuestMode && isAuthenticated && (
                 <TabsTrigger 
                   value="history" 
-                  className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-indigo-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300 text-xs md:text-sm py-3 px-2 md:px-4 flex flex-col md:flex-row items-center gap-1 md:gap-2"
+                  className="min-w-0 rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-indigo-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300 text-xs md:text-sm py-3 px-1 sm:px-2 md:px-4 flex flex-col md:flex-row items-center gap-1 md:gap-2"
                   data-testid="history-tab"
                 >
                   <History className="w-4 h-4" />

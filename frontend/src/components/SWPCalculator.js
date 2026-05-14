@@ -237,7 +237,7 @@ export default function SWPCalculator({ onCalculate, sipData, isGuestMode = fals
   return (
     <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
       {/* Input Section */}
-      <Card className="p-6 md:p-8 bg-white/70 dark:bg-slate-800/70 backdrop-blur-md border-slate-200 dark:border-slate-700 shadow-xl" data-testid="swp-input-card">
+      <Card className="p-4 md:p-6 lg:p-8 bg-white/70 dark:bg-slate-800/70 backdrop-blur-md border-slate-200 dark:border-slate-700 shadow-xl" data-testid="swp-input-card">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100" style={{fontFamily: 'Manrope, sans-serif'}}>
             SWP Calculator
@@ -251,12 +251,12 @@ export default function SWPCalculator({ onCalculate, sipData, isGuestMode = fals
             <Alert className="bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800" data-testid="swp-sip-import-alert">
               <Info className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               <AlertDescription className="text-blue-800 dark:text-blue-300">
-                <div className="flex items-center justify-between">
-                  <span>SIP Portfolio Available: {formatINR(sipData.outputs.totalValue)}</span>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <span className="break-words">SIP Portfolio Available: {formatINR(sipData.outputs.totalValue)}</span>
                   <Button 
                     size="sm" 
                     onClick={importFromSIP}
-                    className="ml-4 bg-blue-600 hover:bg-blue-700"
+                    className="sm:ml-4 bg-blue-600 hover:bg-blue-700"
                     data-testid="swp-import-from-sip-btn"
                   >
                     Import from SIP
@@ -386,10 +386,10 @@ export default function SWPCalculator({ onCalculate, sipData, isGuestMode = fals
 
           {/* Inflation-Adjusted Withdrawal Toggle */}
           <div className="p-4 rounded-xl bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/30 dark:to-orange-900/20 border-2 border-orange-200 dark:border-orange-800">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
+            <div className="flex items-start sm:items-center justify-between gap-3 mb-3">
+              <div className="flex items-start sm:items-center gap-2 min-w-0">
                 <TrendingUp className="w-5 h-5 text-orange-600 dark:text-orange-400" />
-                <Label className="text-sm font-bold text-slate-800 dark:text-slate-100">Inflation-Adjusted Withdrawals</Label>
+                <Label className="text-sm font-bold text-slate-800 dark:text-slate-100 leading-tight">Inflation-Adjusted Withdrawals</Label>
                 <TooltipProvider>
                   <UITooltip>
                     <TooltipTrigger>
@@ -518,7 +518,7 @@ export default function SWPCalculator({ onCalculate, sipData, isGuestMode = fals
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">
                     {results.inflationAdjustedWithdrawal ? 'Starting Monthly Withdrawal' : 'Monthly Withdrawal'}
                   </p>
-                  <p className="text-2xl font-bold text-slate-800 dark:text-slate-100" data-testid="swp-monthly-withdrawal-result">
+                  <p className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100 break-words" data-testid="swp-monthly-withdrawal-result">
                     {formatINR(results.monthlyWithdrawal)}
                   </p>
                   {results.inflationAdjustedWithdrawal && results.finalMonthlyWithdrawal !== results.monthlyWithdrawal && (
@@ -530,35 +530,35 @@ export default function SWPCalculator({ onCalculate, sipData, isGuestMode = fals
 
                 <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Total Withdrawals</p>
-                  <p className="text-2xl font-bold text-amber-600 dark:text-amber-400" data-testid="swp-total-withdrawals">
+                  <p className="text-xl sm:text-2xl font-bold text-amber-600 dark:text-amber-400 break-words" data-testid="swp-total-withdrawals">
                     {formatINR(results.totalWithdrawals)}
                   </p>
                 </div>
 
                 <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800">
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Returns Earned</p>
-                  <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="swp-returns-earned">
+                  <p className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400 break-words" data-testid="swp-returns-earned">
                     {formatINR(results.returnsEarned)}
                   </p>
                 </div>
 
                 <div className="p-4 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800">
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Remaining Portfolio Value</p>
-                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400" data-testid="swp-remaining-value">
+                  <p className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400 break-words" data-testid="swp-remaining-value">
                     {formatINR(results.remainingValue)}
                   </p>
                 </div>
 
                 <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800">
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Exhaustion Probability</p>
-                  <p className="text-2xl font-bold text-red-600 dark:text-red-400" data-testid="swp-exhaustion-probability">
+                  <p className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400 break-words" data-testid="swp-exhaustion-probability">
                     {results.exhaustionProbability}%
                   </p>
                 </div>
               </div>
 
               {/* Chart */}
-              <div className="h-64">
+              <div className="h-56 sm:h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -575,7 +575,7 @@ export default function SWPCalculator({ onCalculate, sipData, isGuestMode = fals
                       ))}
                     </Pie>
                     <Tooltip formatter={(value) => formatINR(value)} />
-                    <Legend />
+                    <Legend wrapperStyle={{ fontSize: '12px' }} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -589,7 +589,7 @@ export default function SWPCalculator({ onCalculate, sipData, isGuestMode = fals
                       View Year-Wise Withdrawal Schedule
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="bg-white dark:bg-slate-800 max-w-3xl max-h-[80vh] overflow-y-auto">
+                  <DialogContent className="bg-white dark:bg-slate-800 w-[calc(100%-1rem)] sm:max-w-3xl max-h-[80vh] overflow-y-auto">
                     <DialogHeader>
                       <DialogTitle>Inflation-Adjusted Withdrawal Schedule</DialogTitle>
                     </DialogHeader>
@@ -603,7 +603,7 @@ export default function SWPCalculator({ onCalculate, sipData, isGuestMode = fals
                       
                       {/* Table */}
                       <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
+                        <table className="w-full min-w-[640px] text-xs sm:text-sm">
                           <thead>
                             <tr className="border-b border-slate-200 dark:border-slate-700">
                               <th className="text-left p-2 font-bold text-slate-800 dark:text-slate-100">Year</th>
@@ -636,7 +636,7 @@ export default function SWPCalculator({ onCalculate, sipData, isGuestMode = fals
               )}
 
               {/* Action Buttons */}
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <SaveCalculationDialog
                   calculationType="swp"
                   inputs={{ lumpsumInvestment, monthlyWithdrawal: getActualMonthlyWithdrawal(), expectedReturn, duration, inflation, riskProfile, withdrawalMode, inflationAdjustedWithdrawal }}
@@ -644,11 +644,11 @@ export default function SWPCalculator({ onCalculate, sipData, isGuestMode = fals
                   isGuestMode={isGuestMode}
                 />
                 
-                <Button variant="outline" onClick={exportToPDF} data-testid="swp-export-pdf-btn">
+                <Button variant="outline" onClick={exportToPDF} className="h-10 md:h-11" data-testid="swp-export-pdf-btn">
                   <Download className="w-4 h-4 mr-2" />
                   PDF
                 </Button>
-                <Button variant="outline" onClick={exportToExcel} data-testid="swp-export-excel-btn">
+                <Button variant="outline" onClick={exportToExcel} className="h-10 md:h-11" data-testid="swp-export-excel-btn">
                   <Download className="w-4 h-4 mr-2" />
                   Excel
                 </Button>

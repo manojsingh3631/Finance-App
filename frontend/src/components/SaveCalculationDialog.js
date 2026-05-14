@@ -115,7 +115,7 @@ export default function SaveCalculationDialog({ calculationType, inputs, outputs
           Save Calculation
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-white dark:bg-slate-900 max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-white dark:bg-slate-900 w-[calc(100%-1rem)] sm:max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">Save Calculation</DialogTitle>
         </DialogHeader>
@@ -181,7 +181,7 @@ export default function SaveCalculationDialog({ calculationType, inputs, outputs
             </div>
 
             {/* Custom Tag Input */}
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <Input
                 placeholder="Add custom tag..."
                 value={customTag}
@@ -193,6 +193,7 @@ export default function SaveCalculationDialog({ calculationType, inputs, outputs
               <Button 
                 variant="outline" 
                 onClick={addCustomTag}
+                className="w-full sm:w-auto"
                 data-testid="add-custom-tag-btn"
               >
                 <Plus className="w-4 h-4" />
@@ -216,18 +217,19 @@ export default function SaveCalculationDialog({ calculationType, inputs, outputs
           </div>
         </div>
 
-        <DialogFooter className="mt-6">
+        <DialogFooter className="mt-6 gap-2">
           <Button
             variant="outline"
             onClick={() => setOpen(false)}
             disabled={saving}
+            className="w-full sm:w-auto"
           >
             Cancel
           </Button>
           <Button
             onClick={handleSave}
             disabled={saving || !name.trim()}
-            className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white"
+            className="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white"
             data-testid="confirm-save-btn"
           >
             {saving ? 'Saving...' : 'Save Calculation'}
