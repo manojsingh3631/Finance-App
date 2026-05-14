@@ -1,5 +1,5 @@
 from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Cookie
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -11,6 +11,9 @@ from typing import List, Optional
 import uuid
 from datetime import datetime, timezone, timedelta
 import httpx
+import jwt
+import secrets
+from urllib.parse import urlencode
 
 
 ROOT_DIR = Path(__file__).parent
@@ -20,6 +23,17 @@ load_dotenv(ROOT_DIR / '.env')
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
+
+# Google OAuth configuration
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
+OAUTH_REDIRECT_URI = os.environ.get('OAUTH_REDIRECT_URI', 'http://localhost:8000/auth/google/callback')
+JWT_SECRET = os.environ.get('JWT_SECRET', secrets.token_hex(32))
+
+# Google OAuth URLs
+GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/auth"
+GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
+GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo"
 
 # Create the main app without a prefix
 app = FastAPI()
@@ -250,6 +264,115 @@ async def logout(request: Request, response: Response):
     )
     
     return {"message": "Logged out successfully"}
+
+# Google OAuth endpoints
+@api_router.get("/auth/google/login")
+async def google_login():
+    """Initiate Google OAuth login"""
+    if not GOOGLE_CLIENT_ID:
+        raise HTTPException(status_code=500, detail="Google OAuth not configured")
+
+    params = {
+        'client_id': GOOGLE_CLIENT_ID,
+        'redirect_uri': OAUTH_REDIRECT_URI,
+        'scope': 'openid email profile',
+        'response_type': 'code',
+        'access_type': 'offline',
+        'prompt': 'consent'
+    }
+
+    auth_url = f"{GOOGLE_AUTH_URL}?{urlencode(params)}"
+    return {"auth_url": auth_url}
+
+@api_router.get("/auth/google/callback")
+async def google_callback(code: str, state: Optional[str] = None):
+    """Handle Google OAuth callback"""
+    if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
+        raise HTTPException(status_code=500, detail="Google OAuth not configured")
+
+    # Exchange code for access token
+    token_data = {
+        'client_id': GOOGLE_CLIENT_ID,
+        'client_secret': GOOGLE_CLIENT_SECRET,
+        'code': code,
+        'grant_type': 'authorization_code',
+        'redirect_uri': OAUTH_REDIRECT_URI
+    }
+
+    async with httpx.AsyncClient() as client:
+        token_response = await client.post(GOOGLE_TOKEN_URL, data=token_data)
+        if token_response.status_code != 200:
+            raise HTTPException(status_code=400, detail="Failed to get access token")
+
+        token_json = token_response.json()
+        access_token = token_json.get('access_token')
+
+        # Get user info from Google
+        user_response = await client.get(
+            GOOGLE_USERINFO_URL,
+            headers={'Authorization': f'Bearer {access_token}'}
+        )
+
+        if user_response.status_code != 200:
+            raise HTTPException(status_code=400, detail="Failed to get user info")
+
+        google_user = user_response.json()
+
+    # Create or update user in database
+    user_id = f"user_{uuid.uuid4().hex[:12]}"
+    user_doc = await db.users.find_one({"email": google_user["email"]}, {"_id": 0})
+
+    if not user_doc:
+        # Create new user
+        user_data = {
+            "user_id": user_id,
+            "email": google_user["email"],
+            "name": google_user["name"],
+            "picture": google_user.get("picture"),
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.users.insert_one(user_data)
+        user_doc = user_data
+    else:
+        # Update existing user
+        user_id = user_doc["user_id"]
+        await db.users.update_one(
+            {"user_id": user_id},
+            {"$set": {
+                "name": google_user["name"],
+                "picture": google_user.get("picture")
+            }}
+        )
+
+    # Create JWT session token
+    session_token = jwt.encode(
+        {
+            'user_id': user_id,
+            'exp': datetime.now(timezone.utc) + timedelta(days=7)
+        },
+        JWT_SECRET,
+        algorithm='HS256'
+    )
+
+    # Store session in database
+    session_data = {
+        "user_id": user_id,
+        "session_token": session_token,
+        "expires_at": (datetime.now(timezone.utc) + timedelta(days=7)).isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+
+    # Delete old sessions for this user
+    await db.user_sessions.delete_many({"user_id": user_id})
+
+    # Insert new session
+    await db.user_sessions.insert_one(session_data)
+
+    # Redirect to frontend with session token
+    frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
+    redirect_url = f"{frontend_url}/auth/callback?session_token={session_token}"
+
+    return RedirectResponse(url=redirect_url)
 
 # Routes
 @api_router.get("/")

@@ -235,7 +235,7 @@ export default function SWPCalculator({ onCalculate, sipData, isGuestMode = fals
   ] : [];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
       {/* Input Section */}
       <Card className="p-6 md:p-8 bg-white/70 dark:bg-slate-800/70 backdrop-blur-md border-slate-200 dark:border-slate-700 shadow-xl" data-testid="swp-input-card">
         <div className="flex items-center justify-between mb-6">

@@ -100,24 +100,24 @@ export default function CalculationHistory() {
 
   return (
     <div className="space-y-6">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl md:text-4xl font-black text-slate-800 dark:text-slate-100 mb-3" style={{fontFamily: 'Manrope, sans-serif'}}>
+      <div className="text-center mb-6 md:mb-8">
+        <h2 className="text-2xl md:text-3xl lg:text-4xl font-black text-slate-800 dark:text-slate-100 mb-2 md:mb-3" style={{fontFamily: 'Manrope, sans-serif'}}>
           Calculation History
         </h2>
-        <p className="text-lg text-slate-600 dark:text-slate-400">Your saved financial calculations</p>
+        <p className="text-base md:text-lg text-slate-600 dark:text-slate-400">Your saved financial calculations</p>
       </div>
 
       {/* Search and Filter Bar */}
-      <Card className="p-4 bg-white dark:bg-slate-900 shadow-xl border-2 border-slate-200 dark:border-slate-800">
-        <div className="space-y-4">
+      <Card className="p-3 md:p-4 bg-white dark:bg-slate-900 shadow-xl border-2 border-slate-200 dark:border-slate-800">
+        <div className="space-y-3 md:space-y-4">
           {/* Search */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-slate-400" />
             <Input
               placeholder="Search by name or notes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 h-12 text-base"
+              className="pl-10 h-10 md:h-12 text-sm md:text-base"
               data-testid="search-calculations"
             />
             {searchTerm && (
@@ -125,7 +125,7 @@ export default function CalculationHistory() {
                 onClick={() => setSearchTerm('')}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2"
               >
-                <X className="w-5 h-5 text-slate-400 hover:text-slate-600" />
+                <X className="w-4 h-4 md:w-5 md:h-5 text-slate-400 hover:text-slate-600" />
               </button>
             )}
           </div>
@@ -133,14 +133,14 @@ export default function CalculationHistory() {
           {/* Tag Filters */}
           {allTags.length > 0 && (
             <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-                <Tag className="w-4 h-4" />
+              <div className="flex items-center gap-2 text-xs md:text-sm font-semibold text-slate-700 dark:text-slate-300">
+                <Tag className="w-3 h-3 md:w-4 md:h-4" />
                 Filter by tag:
               </div>
               <div className="flex flex-wrap gap-2">
                 <Badge
                   variant={selectedTag === null ? "default" : "outline"}
-                  className={`cursor-pointer ${selectedTag === null ? 'bg-purple-600 text-white' : ''}`}
+                  className={`cursor-pointer text-xs md:text-sm ${selectedTag === null ? 'bg-purple-600 text-white' : ''}`}
                   onClick={() => setSelectedTag(null)}
                   data-testid="tag-filter-all"
                 >
@@ -152,7 +152,7 @@ export default function CalculationHistory() {
                     <Badge
                       key={tag}
                       variant={selectedTag === tag ? "default" : "outline"}
-                      className={`cursor-pointer ${selectedTag === tag ? 'bg-purple-600 text-white' : ''}`}
+                      className={`cursor-pointer text-xs md:text-sm ${selectedTag === tag ? 'bg-purple-600 text-white' : ''}`}
                       onClick={() => setSelectedTag(tag)}
                       data-testid={`tag-filter-${tag}`}
                     >
@@ -185,19 +185,19 @@ export default function CalculationHistory() {
           </p>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           {filteredCalculations.map((calc) => (
           <Card
             key={calc.id}
-            className="p-6 bg-white dark:bg-slate-900 shadow-xl border-2 border-slate-200 dark:border-slate-800 hover:shadow-2xl transition-all duration-300"
+            className="p-4 md:p-6 bg-white dark:bg-slate-900 shadow-xl border-2 border-slate-200 dark:border-slate-800 hover:shadow-2xl transition-all duration-300"
             data-testid={`calculation-${calc.id}`}
           >
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-start justify-between mb-3 md:mb-4">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 md:gap-3 mb-2">
                   {getCalculatorIcon(calc.calculator_type)}
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-base md:text-lg font-bold text-slate-800 dark:text-slate-100 truncate">
                       {calc.name || calc.calculator_type.toUpperCase()}
                     </h3>
                     <p className="text-xs text-slate-500">
@@ -232,19 +232,19 @@ export default function CalculationHistory() {
                 variant="ghost"
                 size="sm"
                 onClick={() => deleteCalculation(calc.id)}
-                className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30"
+                className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30 flex-shrink-0 ml-2"
                 data-testid={`delete-calculation-${calc.id}`}
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
               </Button>
             </div>
 
             {/* Notes Preview */}
             {calc.notes && (
-              <div className="mb-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800">
+              <div className="mb-3 p-2 md:p-3 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800">
                 <div className="flex items-start gap-2">
-                  <StickyNote className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-slate-700 dark:text-slate-300 line-clamp-2">
+                  <StickyNote className="w-3 h-3 md:w-4 md:h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                  <p className="text-xs md:text-sm text-slate-700 dark:text-slate-300 line-clamp-2">
                     {calc.notes}
                   </p>
                 </div>

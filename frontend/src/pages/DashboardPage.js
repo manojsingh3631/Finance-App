@@ -75,16 +75,16 @@ export default function DashboardPage({ isGuestMode = false, activeTab: initialT
         <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-900 dark:via-purple-900 dark:to-pink-900">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRjMC0yLjIxIDEuNzktNCA0LTRzNCAxLjc5IDQgNC0xLjc5IDQtNCA0LTQtMS43OS00LTR6bTAgMTBjMC0yLjIxIDEuNzktNCA0LTRzNCAxLjc5IDQgNC0xLjc5IDQtNCA0LTQtMS43OS00LTR6TTIwIDM0YzAtMi4yMSAxLjc5LTQgNC00czQgMS43OSA0IDQtMS43OSA0LTQgNC00LTEuNzktNC00em0wIDEwYzAtMi4yMSAxLjc5LTQgNC00czQgMS43OSA0IDQtMS43OSA0LTQgNC00LTEuNzktNC00eiIvPjwvZz48L2c+PC9zdmc+')] opacity-30"></div>
           
-          <div className="container mx-auto px-4 py-12 md:py-16 relative z-10">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-              <div className="flex-1 text-center md:text-left">
+          <div className="container mx-auto px-4 py-8 md:py-16 relative z-10">
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
+              <div className="flex-1 text-center lg:text-left max-w-4xl">
                 <img 
                   src="https://customer-assets.emergentagent.com/job_dual-fin-calc/artifacts/503uepwb_Vittlit%20Logo%20600X300.jpg" 
                   alt="Vittlit Logo" 
-                  className="h-16 md:h-20 mb-6 mx-auto md:mx-0"
+                  className="h-12 md:h-16 lg:h-20 mb-4 md:mb-6 mx-auto lg:mx-0"
                   data-testid="vittlit-logo"
                 />
-                <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-4 leading-tight" style={{fontFamily: 'Inter, sans-serif'}}>
+                <h1 className="text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white mb-3 md:mb-4 leading-tight" style={{fontFamily: 'Inter, sans-serif'}}>
                   {isGuestMode || !user ? 'Smart Financial' : `Welcome, ${user?.name?.split(' ')[0]}!`}
                   {(isGuestMode || !user) && (
                     <>
@@ -93,7 +93,7 @@ export default function DashboardPage({ isGuestMode = false, activeTab: initialT
                     </>
                   )}
                 </h1>
-                <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl" style={{fontFamily: 'Inter, sans-serif'}}>
+                <p className="text-base md:text-lg lg:text-xl text-white/90 mb-6 md:mb-8 max-w-2xl mx-auto lg:mx-0" style={{fontFamily: 'Inter, sans-serif'}}>
                   {isGuestMode || !user 
                     ? 'Calculate returns, plan investments - Sign in to save your calculations'
                     : 'Your financial planning dashboard'
@@ -102,13 +102,14 @@ export default function DashboardPage({ isGuestMode = false, activeTab: initialT
                 <Button 
                   asChild
                   size="lg" 
-                  className="h-14 px-8 text-lg font-bold bg-white hover:bg-amber-50 text-purple-600 rounded-2xl shadow-2xl hover:shadow-amber-500/50 transition-all duration-300 hover:scale-105"
+                  className="h-12 md:h-14 px-6 md:px-8 text-base md:text-lg font-bold bg-white hover:bg-amber-50 text-purple-600 rounded-2xl shadow-2xl hover:shadow-amber-500/50 transition-all duration-300 hover:scale-105 mx-auto lg:mx-0 w-full sm:w-auto"
                   data-testid="mutual-fund-journey-btn"
                 >
                   <a href="http://p.njw.bz/18501" target="_blank" rel="noopener noreferrer">
-                    <Target className="w-5 h-5 mr-2" />
-                    Start Your Mutual Fund Journey
-                    <ExternalLink className="w-4 h-4 ml-2" />
+                    <Target className="w-4 h-4 md:w-5 md:h-5 mr-2" />
+                    <span className="hidden sm:inline">Start Your Mutual Fund Journey</span>
+                    <span className="sm:hidden">Start Investing</span>
+                    <ExternalLink className="w-3 h-3 md:w-4 md:h-4 ml-2" />
                   </a>
                 </Button>
               </div>
@@ -125,47 +126,47 @@ export default function DashboardPage({ isGuestMode = false, activeTab: initialT
         <div className="container mx-auto px-4 py-8 md:py-12 max-w-7xl">
           {/* Main Calculator Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className={`grid w-full max-w-3xl mx-auto ${isGuestMode || !isAuthenticated ? 'grid-cols-4' : 'grid-cols-5'} mb-8 h-16 bg-slate-900 shadow-xl border border-slate-800 p-1.5 rounded-2xl`} data-testid="calculator-tabs">
+            <TabsList className={`grid w-full max-w-3xl mx-auto ${isGuestMode || !isAuthenticated ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-2 md:grid-cols-5'} mb-8 h-auto min-h-[4rem] bg-slate-900 shadow-xl border border-slate-800 p-1.5 rounded-2xl gap-1`} data-testid="calculator-tabs">
               <TabsTrigger 
                 value="sip" 
-                className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300"
+                className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300 text-xs md:text-sm py-3 px-2 md:px-4 flex flex-col md:flex-row items-center gap-1 md:gap-2"
                 data-testid="sip-tab"
               >
-                <TrendingUp className="w-4 h-4 mr-2" />
-                SIP
+                <TrendingUp className="w-4 h-4" />
+                <span className="hidden sm:inline">SIP</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="swp" 
-                className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300"
+                className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300 text-xs md:text-sm py-3 px-2 md:px-4 flex flex-col md:flex-row items-center gap-1 md:gap-2"
                 data-testid="swp-tab"
               >
-                <TrendingDown className="w-4 h-4 mr-2" />
-                SWP
+                <TrendingDown className="w-4 h-4" />
+                <span className="hidden sm:inline">SWP</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="compare" 
-                className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300"
+                className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300 text-xs md:text-sm py-3 px-2 md:px-4 flex flex-col md:flex-row items-center gap-1 md:gap-2"
                 data-testid="compare-tab"
               >
-                <BarChart3 className="w-4 h-4 mr-2" />
-                Compare
+                <BarChart3 className="w-4 h-4" />
+                <span className="hidden sm:inline">Compare</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="more" 
-                className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-500 data-[state=active]:to-amber-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300"
+                className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-500 data-[state=active]:to-amber-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300 text-xs md:text-sm py-3 px-2 md:px-4 flex flex-col md:flex-row items-center gap-1 md:gap-2"
                 data-testid="more-tools-tab"
               >
-                <Grid3x3 className="w-4 h-4 mr-2" />
-                More
+                <Grid3x3 className="w-4 h-4" />
+                <span className="hidden sm:inline">More</span>
               </TabsTrigger>
               {!isGuestMode && isAuthenticated && (
                 <TabsTrigger 
                   value="history" 
-                  className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-indigo-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300"
+                  className="rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-indigo-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 font-bold text-slate-300 text-xs md:text-sm py-3 px-2 md:px-4 flex flex-col md:flex-row items-center gap-1 md:gap-2"
                   data-testid="history-tab"
                 >
-                  <History className="w-4 h-4 mr-2" />
-                  History
+                  <History className="w-4 h-4" />
+                  <span className="hidden sm:inline">History</span>
                 </TabsTrigger>
               )}
             </TabsList>

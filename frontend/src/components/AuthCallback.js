@@ -12,39 +12,37 @@ export default function AuthCallback() {
     hasProcessed.current = true;
 
     const processSession = async () => {
-      const hash = window.location.hash;
-      const params = new URLSearchParams(hash.substring(1));
-      const sessionId = params.get('session_id');
+      const urlParams = new URLSearchParams(window.location.search);
+      const sessionToken = urlParams.get('session_token');
 
-      if (!sessionId) {
-        console.log('No session_id found, redirecting to login');
+      if (!sessionToken) {
+        console.log('No session_token found, redirecting to login');
         navigate('/login');
         return;
       }
 
       try {
-        console.log('Processing session with sessionId:', sessionId);
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/session`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        console.log('Processing session with sessionToken:', sessionToken);
+
+        // Set the session token as a cookie (simulate what backend would do)
+        document.cookie = `session_token=${sessionToken}; path=/; max-age=${7 * 24 * 60 * 60}; secure; samesite=none`;
+
+        // Get user data
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/me`, {
           credentials: 'include',
-          body: JSON.stringify({ session_id: sessionId }),
         });
 
         if (response.ok) {
           const userData = await response.json();
-          console.log('Session exchange successful, user:', userData);
-          
+          console.log('Session validation successful, user:', userData);
+
           // Set flag to indicate successful login
           sessionStorage.setItem('auth_just_completed', 'true');
           sessionStorage.setItem('user_data', JSON.stringify(userData));
-          
-          // Small delay to ensure cookie is set
-          await new Promise(resolve => setTimeout(resolve, 100));
-          
-          // Navigate to dashboard - the auth context will pick up the session
+
+          // Navigate to dashboard
           navigate('/dashboard', { replace: true });
-          
+
           // Force a reload to ensure clean state
           window.location.reload();
         } else {

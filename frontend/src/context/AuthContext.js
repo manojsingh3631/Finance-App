@@ -71,10 +71,17 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const login = () => {
-    // REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
-    const redirectUrl = window.location.origin + '/dashboard';
-    window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
+  const login = async () => {
+    try {
+      // Get Google OAuth URL from backend
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/google/login`);
+      const data = await response.json();
+
+      // Redirect to Google OAuth
+      window.location.href = data.auth_url;
+    } catch (error) {
+      console.error('Failed to initiate login:', error);
+    }
   };
 
   const logout = async () => {

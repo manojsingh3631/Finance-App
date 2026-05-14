@@ -215,27 +215,27 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
   const goalPlannerData = showGoalPlanner ? calculateGoalSIP() : null;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
       {/* Input Section */}
-      <Card className="p-6 md:p-8 bg-white/70 dark:bg-slate-800/70 backdrop-blur-md border-slate-200 dark:border-slate-700 shadow-xl" data-testid="sip-input-card">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100" style={{fontFamily: 'Manrope, sans-serif'}}>
+      <Card className="p-4 md:p-6 lg:p-8 bg-white/70 dark:bg-slate-800/70 backdrop-blur-md border-slate-200 dark:border-slate-700 shadow-xl" data-testid="sip-input-card">
+        <div className="flex items-center justify-between mb-4 md:mb-6">
+          <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-slate-100" style={{fontFamily: 'Manrope, sans-serif'}}>
             SIP Calculator
           </h2>
-          <TrendingUp className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+          <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-blue-600 dark:text-blue-400" />
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
           {/* Include Current Savings Toggle */}
-          <div className="p-4 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/30 dark:to-purple-900/20 border-2 border-purple-200 dark:border-purple-800">
+          <div className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/30 dark:to-purple-900/20 border-2 border-purple-200 dark:border-purple-800">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <Wallet className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                <Label className="text-sm font-bold text-slate-800 dark:text-slate-100">Include Current Savings/Portfolio</Label>
+                <Wallet className="w-4 h-4 md:w-5 md:h-5 text-purple-600 dark:text-purple-400" />
+                <Label className="text-xs md:text-sm font-bold text-slate-800 dark:text-slate-100">Include Current Savings/Portfolio</Label>
                 <TooltipProvider>
                   <UITooltip>
                     <TooltipTrigger>
-                      <Info className="w-4 h-4 text-slate-400" />
+                      <Info className="w-3 h-3 md:w-4 md:h-4 text-slate-400" />
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>Add your existing savings or lump sum investment</p>
@@ -253,17 +253,17 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
             {includeLumpsum && (
               <div className="space-y-3 mt-4">
                 <Alert className="bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800">
-                  <Info className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <Info className="w-3 h-3 md:w-4 md:h-4 text-blue-600 dark:text-blue-400" />
                   <AlertDescription className="text-xs text-blue-800 dark:text-blue-300">
                     Your existing savings will grow alongside your monthly SIP investments
                   </AlertDescription>
                 </Alert>
-                <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Current Savings/Lumpsum Amount (₹)</Label>
+                <Label className="text-xs md:text-sm font-semibold text-slate-700 dark:text-slate-300">Current Savings/Lumpsum Amount (₹)</Label>
                 <Input
                   type="number"
                   value={lumpsumAmount}
                   onChange={(e) => setLumpsumAmount(Number(e.target.value))}
-                  className="text-lg font-semibold h-12 bg-white dark:bg-slate-900"
+                  className="text-base md:text-lg font-semibold h-10 md:h-12 bg-white dark:bg-slate-900"
                   data-testid="sip-lumpsum-amount-input"
                 />
                 <Slider
@@ -280,11 +280,11 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
           {/* Monthly Investment */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Monthly Investment (₹)</Label>
+              <Label className="text-xs md:text-sm font-semibold text-slate-700 dark:text-slate-300">Monthly Investment (₹)</Label>
               <TooltipProvider>
                 <UITooltip>
                   <TooltipTrigger>
-                    <Info className="w-4 h-4 text-slate-400" />
+                    <Info className="w-3 h-3 md:w-4 md:h-4 text-slate-400" />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Amount you plan to invest every month</p>
@@ -296,7 +296,7 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
               type="number"
               value={monthlyInvestment}
               onChange={(e) => setMonthlyInvestment(Number(e.target.value))}
-              className="text-lg font-semibold h-12 bg-white dark:bg-slate-900"
+              className="text-base md:text-lg font-semibold h-10 md:h-12 bg-white dark:bg-slate-900"
               data-testid="sip-monthly-investment-input"
             />
             <Slider
@@ -313,8 +313,8 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
           {/* Expected Return */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Expected Return (%)</Label>
-              <span className="text-sm font-bold text-blue-600 dark:text-blue-400">{expectedReturn}%</span>
+              <Label className="text-xs md:text-sm font-semibold text-slate-700 dark:text-slate-300">Expected Return (%)</Label>
+              <span className="text-xs md:text-sm font-bold text-blue-600 dark:text-blue-400">{expectedReturn}%</span>
             </div>
             <Slider
               value={[expectedReturn]}
@@ -329,8 +329,8 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
           {/* Duration */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Duration (Years)</Label>
-              <span className="text-sm font-bold text-blue-600 dark:text-blue-400">{duration} years</span>
+              <Label className="text-xs md:text-sm font-semibold text-slate-700 dark:text-slate-300">Duration (Years)</Label>
+              <span className="text-xs md:text-sm font-bold text-blue-600 dark:text-blue-400">{duration} years</span>
             </div>
             <Slider
               value={[duration]}
@@ -345,8 +345,8 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
           {/* Step-up */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Step-up (%)</Label>
-              <span className="text-sm font-bold text-blue-600 dark:text-blue-400">{stepUp}%</span>
+              <Label className="text-xs md:text-sm font-semibold text-slate-700 dark:text-slate-300">Step-up (%)</Label>
+              <span className="text-xs md:text-sm font-bold text-blue-600 dark:text-blue-400">{stepUp}%</span>
             </div>
             <Slider
               value={[stepUp]}
@@ -361,8 +361,8 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
           {/* Inflation */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Inflation (%)</Label>
-              <span className="text-sm font-bold text-blue-600 dark:text-blue-400">{inflation}%</span>
+              <Label className="text-xs md:text-sm font-semibold text-slate-700 dark:text-slate-300">Inflation (%)</Label>
+              <span className="text-xs md:text-sm font-bold text-blue-600 dark:text-blue-400">{inflation}%</span>
             </div>
             <Slider
               value={[inflation]}
@@ -376,9 +376,9 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
 
           {/* Risk Profile */}
           <div className="space-y-3">
-            <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Risk Profile</Label>
+            <Label className="text-xs md:text-sm font-semibold text-slate-700 dark:text-slate-300">Risk Profile</Label>
             <Select value={riskProfile} onValueChange={setRiskProfile}>
-              <SelectTrigger className="h-12 bg-white dark:bg-slate-900" data-testid="sip-risk-profile-select">
+              <SelectTrigger className="h-10 md:h-12 bg-white dark:bg-slate-900" data-testid="sip-risk-profile-select">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -391,7 +391,7 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
 
           <Button
             onClick={calculateSIP}
-            className="w-full h-12 text-base font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-xl"
+            className="w-full h-10 md:h-12 text-sm md:text-base font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-xl"
             data-testid="sip-calculate-btn"
           >
             Calculate Returns
@@ -528,7 +528,7 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
               </div>
 
               {/* Action Buttons */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <SaveCalculationDialog
                   calculationType="sip"
                   inputs={{ monthlyInvestment, expectedReturn, duration, stepUp, inflation, riskProfile, includeLumpsum, lumpsumAmount: includeLumpsum ? lumpsumAmount : 0 }}
@@ -538,12 +538,12 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
                 
                 <Dialog open={showGoalPlanner} onOpenChange={setShowGoalPlanner}>
                   <DialogTrigger asChild>
-                    <Button variant="outline" data-testid="sip-goal-planner-btn">
+                    <Button variant="outline" className="h-10 md:h-12" data-testid="sip-goal-planner-btn">
                       <Target className="w-4 h-4 mr-2" />
                       Goal Planner
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="bg-white dark:bg-slate-800">
+                  <DialogContent className="bg-white dark:bg-slate-800 max-w-sm mx-4">
                     <DialogHeader>
                       <DialogTitle>Goal Planner</DialogTitle>
                     </DialogHeader>
@@ -581,11 +581,11 @@ export default function SIPCalculator({ onCalculate, isGuestMode = false }) {
                   </DialogContent>
                 </Dialog>
 
-                <Button variant="outline" onClick={exportToPDF} data-testid="sip-export-pdf-btn">
+                <Button variant="outline" onClick={exportToPDF} className="h-10 md:h-12" data-testid="sip-export-pdf-btn">
                   <Download className="w-4 h-4 mr-2" />
                   PDF
                 </Button>
-                <Button variant="outline" onClick={exportToExcel} data-testid="sip-export-excel-btn">
+                <Button variant="outline" onClick={exportToExcel} className="h-10 md:h-12" data-testid="sip-export-excel-btn">
                   <Download className="w-4 h-4 mr-2" />
                   Excel
                 </Button>

@@ -76,7 +76,7 @@ export default function MoreTools() {
         <p className="text-lg text-slate-600 dark:text-slate-400">Explore additional calculators for comprehensive financial planning</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {tools.map((tool) => {
           const Icon = tool.icon;
           return (
